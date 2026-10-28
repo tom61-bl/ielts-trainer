@@ -96,7 +96,7 @@ export function ComputerPane({
           </div>
         )}
       </div>
-      <div className="min-h-0 overflow-auto p-5">
+      <div className="min-h-0 overflow-auto p-5" onMouseUp={onMouseUp}>
         {groups
           .filter((group) => /\d+\s*[–-]\s*\d+/.test(group.title))
           .map((group) => {

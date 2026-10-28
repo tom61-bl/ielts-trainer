@@ -220,9 +220,8 @@ export function PaperWorkspace({
     />
   );
 
-  const sentence = Boolean(
-    lookup && (tool === "translate" || lookup.text.trim().split(/\s+/).length >= 4),
-  );
+  const tokenCount = lookup?.text.trim().split(/\s+/).filter(Boolean).length ?? 0;
+  const sentence = Boolean(lookup && tokenCount > 1 && (tool === "translate" || tokenCount >= 4));
   const lookupSaved = Boolean(
     lookup && words.some((item) => item.word.toLowerCase() === lookup.text.trim().toLowerCase()),
   );

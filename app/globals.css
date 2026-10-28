@@ -1057,15 +1057,30 @@ a {
   line-height: 1.2;
 }
 
-.dict-star {
+.dict-star,
+.dict-speak {
   display: grid;
   width: 28px;
   height: 28px;
   place-items: center;
   border: none;
   background: transparent;
-  color: #f0c14a;
   cursor: pointer;
+}
+
+.dict-star {
+  color: #f0c14a;
+}
+
+.dict-speak {
+  border-radius: 999px;
+  color: #f5f2ec;
+}
+
+.dict-speak:hover,
+.dict-speak[data-speaking="true"] {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ff9a62;
 }
 
 .dict-ipa {
