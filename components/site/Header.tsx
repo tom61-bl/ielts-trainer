@@ -9,15 +9,21 @@ import { ThemeToggle } from "../ui/ThemeToggle";
 import { Modal } from "../ui/Modal";
 
 const links = [
-  { href: "/speaking", label: "口语" },
+  { href: "/listening", label: "听力" },
+  { href: "/reading", label: "阅读" },
   { href: "/writing", label: "写作" },
+  { href: "/translation", label: "翻译" },
   { href: "/help", label: "帮助" },
 ];
 
+function isPractice(path: string) {
+  const clean = path.replace(/\/$/, "") || "/";
+  return /^\/ielts\/[^/]+$/.test(clean) || ["/listening", "/reading", "/writing", "/translation"].includes(clean);
+}
+
 export function Header() {
   const path = usePathname();
-  const viewer = /^\/ielts\/[^/]+/.test(path);
-  const catalog = path === "/" || path === "/ielts";
+  const viewer = isPractice(path);
   const { user, setLoginOpen, logout } = useAuth();
   const [menu, setMenu] = useState(false);
 
@@ -32,7 +38,6 @@ export function Header() {
             <path d="M6 4.5A2.5 2.5 0 0 1 8.5 2H18" />
           </svg>
           <span>雅思真题在线</span>
-          <span className="site-logo-sub">按试卷排版设计</span>
         </Link>
         <span className="site-badge" title="自研模拟，不是官方题库">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -42,16 +47,14 @@ export function Header() {
           自研模拟卷
         </span>
         <div className="site-header-actions">
-          {catalog ? null : (
-            <nav className="site-nav">
-              {links.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          )}
-          {catalog ? null : user ? (
+          <nav className="site-nav">
+            {links.map((link) => (
+              <Link key={link.href} href={link.href}>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          {user ? (
             <button className="btn btn-text hidden sm:inline-flex" onClick={logout}>
               {user.name}
             </button>

@@ -30,11 +30,11 @@ export default function HelpPage() {
     <main className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="font-serif text-4xl">帮助</h1>
       <ol className="mt-6 space-y-3 text-sm leading-7">
-        <li>1. 首页就是试卷目录，点封面进入一整套。</li>
-        <li>2. 需要时再按学术类 / 培训类、纸笔 / 机考、科目筛选。</li>
-        <li>3. 打开试卷后，用答题卡定位。纸笔模式翻 PDF，机考模式左右分栏。</li>
-        <li>4. 选中单词会弹出释义，并用浏览器的英语语音读出来。点喇叭可以再听一遍，也可以收入生词本，再导出 CSV 或 Anki。</li>
-        <li>5. 登录后可以导入 Markdown 阅读：Passage、A. B. C. 段落、Questions，文末加 Answers 就能对答案。</li>
+        <li>1. 首页只有听力、阅读、写作、翻译四个板块。</li>
+        <li>2. 听力在底部播放，点题号会跳到那一句。阅读可以朗读整篇。</li>
+        <li>3. 选中单词会弹出释义，并用英语语音读出来。点星星收入生词本。</li>
+        <li>4. 选中句子，或先点 T 再选一小段，可以看到中文。荧光笔可以在正文上做记号。</li>
+        <li>5. 阅读页登录后可以导入 Markdown。文末加上 Answers 就能对答案。</li>
       </ol>
       <div className="mt-8 space-y-3">
         {faqs.map((item) => (

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ChevronLeft, FileText, Maximize2, Monitor, Share2, X } from "lucide-react";
-import type { GradeResult, Paper, PassageFile, Question, Skill, ViewMode } from "@/lib/types";
+import { ChevronLeft, FileText, Maximize2, Share2, X } from "lucide-react";
+import type { GradeResult, Paper, PassageFile, Question, Skill } from "@/lib/types";
 import { gradeAll } from "@/lib/grade";
 import { getAnswerKeys, type AnswerKey } from "@/lib/keys";
 import { loadPrefs, loadProgress, loadWordbook, readJson, savePrefs, saveProgress, saveWordbook, storageKeys, writeJson } from "@/lib/storage";
@@ -12,7 +12,6 @@ import { ShareModal } from "../ui/ShareModal";
 import { AnswerSheet } from "./AnswerSheet";
 import { AudioPlayer, type AudioHandle } from "./AudioPlayer";
 import { ComputerPane } from "./ComputerPane";
-import { PdfViewer, type PdfHandle } from "./PdfViewer";
 import { ThemeToggle } from "../ui/ThemeToggle";
 import { WordLookupPanel } from "../wordbook/WordLookupPanel";
 import { WordbookDrawer } from "../wordbook/WordbookDrawer";
@@ -25,14 +24,23 @@ export function PaperWorkspace({
   questions,
   passages,
   answerKeys,
+  backHref = "/",
+  sets,
+  onSet,
+  examAudio = true,
+  corner,
 }: {
   paper: Paper;
   questions: Question[];
   passages: PassageFile;
   answerKeys?: AnswerKey[] | null;
+  backHref?: string;
+  sets?: { id: string; title: string }[];
+  onSet?: (id: string) => void;
+  examAudio?: boolean;
+  corner?: ReactNode;
 }) {
   const toast = useToast();
-  const pdfRef = useRef<PdfHandle>(null);
   const audioRef = useRef<AudioHandle>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -40,11 +48,8 @@ export function PaperWorkspace({
   const [ready, setReady] = useState(false);
   const [skill, setSkill] = useState<Skill>(questions.some((q) => q.skill === "listening") ? "listening" : "reading");
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [highlightId, setHighlightId] = useState<string | null>(null);
   const [grade, setGrade] = useState<Record<string, GradeResult> | null>(null);
-  const [page, setPage] = useState(1);
   const [scale, setScale] = useState(1);
-  const [mode, setMode] = useState<ViewMode>(paper.pdfUrl ? paper.testType : "computer");
   const [followId, setFollowId] = useState<string | null>(null);
   const [share, setShare] = useState(false);
   const [wordbookOpen, setWordbookOpen] = useState(false);
@@ -107,10 +112,7 @@ export function PaperWorkspace({
     setActiveId(id);
     setSkill(question.skill);
     setVisited((current) => (current.includes(id) ? current : [...current, id]));
-    setHighlightId(id);
-    window.setTimeout(() => setHighlightId((current) => (current === id ? null : current)), 1500);
-    if (mode === "paper") await pdfRef.current?.scrollToQuestion(id);
-    else document.getElementById(`computer-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    document.getElementById(`computer-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     if (question.skill === "listening" && question.audioAnchor != null) {
       audioRef.current?.seek(question.audioAnchor);
     }
@@ -235,7 +237,7 @@ export function PaperWorkspace({
     <div ref={rootRef} className="exam-desk">
       <header className="exam-top">
         <div className="exam-top-left">
-          <Link href="/ielts" className="exam-icon" aria-label="返回目录">
+          <Link href={backHref} className="exam-icon" aria-label="返回">
             <ChevronLeft size={18} />
           </Link>
           <StudyTools
@@ -264,19 +266,24 @@ export function PaperWorkspace({
             onRedo={redoMarks}
           />
         </div>
-        <h1 className="exam-title">{paper.title}</h1>
+        {sets && sets.length > 1 && onSet ? (
+          <select
+            className="exam-set"
+            aria-label="选择一套"
+            value={paper.id}
+            onChange={(event) => onSet(event.target.value)}
+          >
+            {sets.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.title}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <h1 className="exam-title">{paper.title}</h1>
+        )}
         <div className="exam-top-right">
-          {paper.pdfUrl ? (
-            <button
-              type="button"
-              className="exam-icon"
-              aria-pressed={mode === "computer"}
-              aria-label={mode === "paper" ? "切换到机考" : "切换到纸笔"}
-              onClick={() => setMode(mode === "paper" ? "computer" : "paper")}
-            >
-              {mode === "paper" ? <Monitor size={16} /> : <FileText size={16} />}
-            </button>
-          ) : null}
+          {corner}
           <ThemeToggle iconOnly className="exam-icon" />
           <button
             type="button"
@@ -296,25 +303,6 @@ export function PaperWorkspace({
       </header>
 
       <div className="exam-stage">
-        {mode === "paper" ? (
-          <PdfViewer
-            ref={pdfRef}
-            url={paper.pdfUrl}
-            scale={scale}
-            questions={questions}
-            answers={answers}
-            activeId={activeId}
-            highlightId={highlightId}
-            grade={grade}
-            onPage={setPage}
-            onOpen={(id) => void selectQuestion(id)}
-            onChange={(id, value) => setAnswers((current) => ({ ...current, [id]: value }))}
-            onSelectText={(text, rect) => setLookup({ text, rect })}
-            tool={tool}
-            marks={marks}
-            onInk={(text, inkPage) => markText(text, inkPage, "paper")}
-          />
-        ) : (
           <ComputerPane
             file={passages}
             questions={questions}
@@ -329,10 +317,9 @@ export function PaperWorkspace({
             onSelectText={(text, rect) => setLookup({ text, rect })}
             tool={tool}
             marks={marks}
+            scale={scale}
             onInk={(text, inkPage) => markText(text, inkPage, "computer")}
           />
-        )}
-        <p className="exam-page">{page}</p>
         {sheetOpen ? (
           <aside className="exam-drawer">
             <div className="exam-drawer-bar">
@@ -386,18 +373,26 @@ export function PaperWorkspace({
       >
         <FileText size={18} />
       </button>
-      <footer className="exam-audio">
-        <AudioPlayer
-          ref={audioRef}
-          src={paper.audioUrl}
-          onTime={followTime}
-          onTranscript={() => {
-            setSheetOpen(false);
-            setScriptOpen((open) => !open);
-          }}
-          onGrade={gradePaper}
-        />
-      </footer>
+      {examAudio ? (
+        <footer className="exam-audio">
+          <AudioPlayer
+            ref={audioRef}
+            src={paper.audioUrl}
+            onTime={followTime}
+            onTranscript={() => {
+              setSheetOpen(false);
+              setScriptOpen((open) => !open);
+            }}
+            onGrade={gradePaper}
+          />
+        </footer>
+      ) : (
+        <footer className="exam-audio">
+          <div className="exam-transport">
+            <p className="exam-audio-note">选中单词会读出读音。阅读页可以朗读整篇，记号留在这台浏览器。</p>
+          </div>
+        </footer>
+      )}
 
       {lookup && sentence ? (
         <SentenceCard

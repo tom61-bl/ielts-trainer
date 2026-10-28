@@ -5,7 +5,8 @@ import { Footer } from "./Footer";
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
-  const viewer = /^\/ielts\/[^/]+/.test(path);
+  const clean = path.replace(/\/$/, "") || "/";
+  const viewer = /^\/ielts\/[^/]+$/.test(clean) || ["/listening", "/reading", "/writing", "/translation"].includes(clean);
   return (
     <>
       {children}

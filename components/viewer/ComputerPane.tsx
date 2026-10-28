@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Volume2 } from "lucide-react";
 import type { GradeResult, PassageFile, Question, Skill } from "@/lib/types";
+import { speakEnglish } from "@/lib/speak";
 import { AnswerControl } from "./AnswerControl";
 import { paintPlain, type InkMark } from "./inkLayer";
 import type { StudyTool } from "./StudyTools";
@@ -17,6 +19,7 @@ export function ComputerPane({
   onSelectText,
   tool = "lookup",
   marks = [],
+  scale = 1,
   onInk,
 }: {
   file: PassageFile;
@@ -29,6 +32,7 @@ export function ComputerPane({
   onSelectText: (text: string, rect: DOMRect) => void;
   tool?: StudyTool;
   marks?: InkMark[];
+  scale?: number;
   onInk?: (text: string, page: number) => void;
 }) {
   const passages = file.passages;
@@ -55,7 +59,7 @@ export function ComputerPane({
       <div className={`min-h-0 overflow-auto border-b border-line p-5 lg:border-b-0 lg:border-r ${tool === "ink" ? "ink-on" : ""}`} onMouseUp={onMouseUp}>
         {skill === "reading" && passage ? (
           <>
-            <div className="mb-4 flex flex-wrap gap-2">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
               {passages.map((item) => (
                 <button
                   key={item.section}
@@ -65,9 +69,17 @@ export function ComputerPane({
                   Passage {item.section}
                 </button>
               ))}
+              <button
+                type="button"
+                className="btn btn-ghost h-10 px-3 text-sm"
+                onClick={() => speakEnglish(passage.paragraphs.map((item) => item.text).join(" "))}
+              >
+                <Volume2 size={15} />
+                朗读这一篇
+              </button>
             </div>
-            <h2 className="font-serif text-2xl leading-snug">{passage.title}</h2>
-            <div className="mt-4 space-y-4 font-serif text-[17px] leading-8">
+            <h2 className="font-serif text-2xl leading-snug">{passage.title.replace(/ · (学术类|培训类)$/u, "")}</h2>
+            <div className="mt-4 space-y-4 font-serif leading-8" style={{ fontSize: `${17 * scale}px` }}>
               {passage.paragraphs.map((paragraph, index) => (
                 <p key={`${paragraph.label}-${index}`}>
                   {paragraph.label ? <strong className="mr-2">{paragraph.label}</strong> : null}
@@ -91,7 +103,7 @@ export function ComputerPane({
           <div>
             <h2 className="font-serif text-2xl">听力作答</h2>
             <p className="mt-3 text-sm leading-7 text-muted">
-              录音在侧栏。点题号会把播放跳到那一句。这里不放原文，避免提前看到答案。
+              录音在底部。点题号会把播放跳到那一句。选中单词可以听读音、看释义，再收进生词本。这里不放原文，避免提前看到答案。
             </p>
           </div>
         )}
