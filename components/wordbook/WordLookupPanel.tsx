@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import glossary from "@/data/glossary.json";
 
 export function WordLookupPanel({
   text,
@@ -22,18 +23,9 @@ export function WordLookupPanel({
 
   useEffect(() => {
     if (!member || sentence) return;
-    let cancelled = false;
-    void fetch(`/api/define?word=${encodeURIComponent(word)}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!cancelled) setDetail(data);
-      })
-      .catch(() => {
-        if (!cancelled) setDetail({ found: false });
-      });
-    return () => {
-      cancelled = true;
-    };
+    const clean = word.toLowerCase().replace(/[^a-z'-]/g, "");
+    const hit = (glossary as { word: string; ipa: string; zh: string }[]).find((entry) => entry.word === clean);
+    setDetail(hit ? { ipa: hit.ipa, zh: hit.zh, found: true } : { found: false });
   }, [member, sentence, word]);
 
   const left = Math.min(rect.left, window.innerWidth - 300);

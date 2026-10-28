@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { publicPath } from "@/lib/content";
 import type { GradeResult, Question } from "@/lib/types";
 import { applyInkMarks, type InkMark } from "./inkLayer";
 import type { StudyTool } from "./StudyTools";
@@ -85,7 +86,7 @@ export const PdfViewer = forwardRef<
     (async () => {
       try {
         const pdfjs = await import("pdfjs-dist");
-        pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+        pdfjs.GlobalWorkerOptions.workerSrc = publicPath("/pdf.worker.min.mjs");
         const task = pdfjs.getDocument(url);
         const loaded = (await task.promise) as unknown as PdfDocument;
         if (cancelled) {

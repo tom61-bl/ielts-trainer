@@ -42,8 +42,10 @@ npm run samples
 
 支付、云同步和数据库还没有接。进度键名是 `ielts:progress:<paperId>`。
 
-## 部署
+## 部署到 GitHub Pages
 
-这是 Next.js App Router 项目，可以直接部署到 Vercel。构建命令 `npm run build`，不需要环境变量。
+站点是静态导出。推到仓库的 `main` 后，`.github/workflows/pages.yml` 会构建 `out/` 并发布到 GitHub Pages。项目站的地址是 `https://<用户名>.github.io/<仓库名>/`，构建时会把 `NEXT_PUBLIC_BASE_PATH` 设成 `/<仓库名>`。如果仓库名以 `.github.io` 结尾，前缀留空。
 
-本机账号和会员状态都在浏览器里，换设备不会跟着走。
+仓库 Settings → Pages 的 Source 选 GitHub Actions。仓库需要是公开的，免费账号才能用 Pages。
+
+本机账号、会员、进度和笔迹都在浏览器里，换设备不会跟着走。对答案、释义、译文和范文在静态站里仍按本机会员开关显示。

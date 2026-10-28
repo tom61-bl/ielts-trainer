@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { getWritingSample } from "@/lib/keys";
 import { readJson, storageKeys, writeJson } from "@/lib/storage";
 import type { WritingTask } from "@/lib/types";
 import { MemberGate } from "../ui/MemberGate";
@@ -44,19 +45,18 @@ export function WritingDesk({ tasks }: { tasks: WritingTask[] }) {
     if (task) writeJson(storageKeys.writing(task.id), value);
   }
 
-  async function openSample() {
+  function openSample() {
     if (!task) return;
-    const response = await fetch(`/api/sample?id=${task.id}`);
-    if (response.status === 402) {
+    if (!user?.member) {
       setGate(true);
       return;
     }
-    if (!response.ok) {
+    const sampleText = getWritingSample(task.id);
+    if (!sampleText) {
       toast("范文没有打开");
       return;
     }
-    const data = (await response.json()) as { sample: string };
-    setSample(data.sample);
+    setSample(sampleText);
   }
 
   if (!task) return <p>还没有写作题。</p>;

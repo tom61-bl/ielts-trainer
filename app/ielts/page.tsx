@@ -1,16 +1,11 @@
 import { Suspense } from "react";
-import { CatalogBoard } from "@/components/home/CatalogBoard";
+import { CatalogRoute } from "@/components/home/CatalogRoute";
 import { InviteBanner } from "@/components/home/InviteBanner";
 import { getPapers, questionTotals } from "@/lib/papers";
 
 export const metadata = { title: "雅思真题" };
 
-export default async function CatalogPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ skill?: string }>;
-}) {
-  const params = await searchParams;
+export default function CatalogPage() {
   return (
     <main className="pb-16">
       <Suspense fallback={null}>
@@ -18,7 +13,7 @@ export default async function CatalogPage({
           <InviteBanner />
         </div>
       </Suspense>
-      <CatalogBoard papers={getPapers()} totals={questionTotals()} initialSkill={params.skill ?? "all"} />
+      <CatalogRoute papers={getPapers()} totals={questionTotals()} />
     </main>
   );
 }

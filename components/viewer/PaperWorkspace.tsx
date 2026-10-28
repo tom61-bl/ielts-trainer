@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { GradeResult, Paper, PassageFile, Question, Skill, ViewMode } from "@/lib/types";
+import { gradeAll } from "@/lib/grade";
 import { useAuth } from "@/lib/auth";
+import { getAnswerKeys } from "@/lib/keys";
 import { loadPrefs, loadProgress, loadWordbook, readJson, savePrefs, saveProgress, saveWordbook, storageKeys, writeJson } from "@/lib/storage";
 import { useToast } from "../ui/Toast";
 import { MemberGate } from "../ui/MemberGate";
@@ -115,22 +117,17 @@ export function PaperWorkspace({
     }
   }
 
-  async function gradePaper() {
-    const response = await fetch("/api/grade", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ paperId: paper.id, answers }),
-    });
-    if (response.status === 402) {
+  function gradePaper() {
+    if (!user?.member) {
       setGate("对答案");
       return;
     }
-    if (!response.ok) {
-      toast("对答案没有完成");
+    const keys = getAnswerKeys(paper.id);
+    if (!keys) {
+      toast("这套卷还没有答案");
       return;
     }
-    const data = (await response.json()) as { results: Record<string, GradeResult> };
-    setGrade(data.results);
+    setGrade(gradeAll(keys, answers));
     toast("已对答案");
   }
 

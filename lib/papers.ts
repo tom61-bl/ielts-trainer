@@ -7,6 +7,7 @@ import qG1 from "@/data/questions/qingjuan-g1.json";
 import pA1 from "@/data/passages/qingjuan-a1.json";
 import pA2 from "@/data/passages/qingjuan-a2.json";
 import pG1 from "@/data/passages/qingjuan-g1.json";
+import { publicPath } from "./content";
 import type {
   Paper,
   PassageFile,
@@ -31,7 +32,13 @@ const passageMap: Record<string, PassageFile> = {
 export function getPapers(): Paper[] {
   return (papers as Paper[])
     .slice()
-    .sort((a, b) => b.book - a.book || a.module.localeCompare(b.module) || b.test - a.test);
+    .sort((a, b) => b.book - a.book || a.module.localeCompare(b.module) || b.test - a.test)
+    .map((paper) => ({
+      ...paper,
+      pdfUrl: publicPath(paper.pdfUrl),
+      audioUrl: paper.audioUrl ? publicPath(paper.audioUrl) : paper.audioUrl,
+      thumbnailUrl: paper.thumbnailUrl ? publicPath(paper.thumbnailUrl) : paper.thumbnailUrl,
+    }));
 }
 
 export function questionTotals(): Record<string, number> {

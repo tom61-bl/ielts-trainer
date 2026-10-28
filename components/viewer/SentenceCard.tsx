@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import sentences from "@/data/sentences.json";
+import { translateSelection } from "@/lib/translate";
 
 export function SentenceCard({
   text,
@@ -36,32 +38,14 @@ export function SentenceCard({
       setState("locked");
       return;
     }
-    let cancelled = false;
-    setState("loading");
-    void fetch(`/api/translate?q=${encodeURIComponent(text)}`)
-      .then(async (response) => {
-        if (response.status === 402) return { member: false };
-        return response.json();
-      })
-      .then((data: { member?: boolean; found?: boolean; zh?: string }) => {
-        if (cancelled) return;
-        if (data.member === false) {
-          setState("locked");
-          return;
-        }
-        if (data.found && data.zh) {
-          setZh(data.zh);
-          setState("ready");
-          return;
-        }
-        setState("miss");
-      })
-      .catch(() => {
-        if (!cancelled) setState("miss");
-      });
-    return () => {
-      cancelled = true;
-    };
+    const hit = translateSelection(text, sentences);
+    if (hit) {
+      setZh(hit.zh);
+      setState("ready");
+      return;
+    }
+    setZh("");
+    setState("miss");
   }, [member, text]);
 
   const left = Math.min(Math.max(8, rect.left), window.innerWidth - 340);

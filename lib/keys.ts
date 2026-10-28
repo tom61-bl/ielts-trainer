@@ -1,5 +1,3 @@
-import "server-only";
-
 import kA1 from "@/data/keys/qingjuan-a1.json";
 import kA2 from "@/data/keys/qingjuan-a2.json";
 import kG1 from "@/data/keys/qingjuan-g1.json";

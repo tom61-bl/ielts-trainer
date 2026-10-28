@@ -33,7 +33,10 @@ export function PaperCard({
   }, [paper.id, total]);
 
   return (
-    <Link href={`/ielts/${paper.id}`} className="cover-card">
+    <Link
+      href={paper.visibility === "private" ? `/ielts/local?id=${encodeURIComponent(paper.id)}` : `/ielts/${paper.id}`}
+      className="cover-card"
+    >
       {paper.thumbnailUrl && !failed ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={paper.thumbnailUrl} alt="" onError={() => setFailed(true)} />

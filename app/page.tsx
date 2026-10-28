@@ -1,15 +1,9 @@
 import { Suspense } from "react";
-import { CatalogBoard } from "@/components/home/CatalogBoard";
+import { CatalogRoute } from "@/components/home/CatalogRoute";
 import { InviteBanner } from "@/components/home/InviteBanner";
 import { getPapers, questionTotals } from "@/lib/papers";
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ skill?: string }>;
-}) {
-  const params = await searchParams;
-  const papers = getPapers();
+export default function HomePage() {
   return (
     <main className="pb-16">
       <Suspense fallback={null}>
@@ -17,7 +11,7 @@ export default async function HomePage({
           <InviteBanner />
         </div>
       </Suspense>
-      <CatalogBoard papers={papers} totals={questionTotals()} initialSkill={params.skill ?? "all"} />
+      <CatalogRoute papers={getPapers()} totals={questionTotals()} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
