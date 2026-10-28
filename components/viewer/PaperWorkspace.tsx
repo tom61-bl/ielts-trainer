@@ -2,14 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, CircleArrowUp, FileText, Maximize2, Monitor, Share2, X } from "lucide-react";
+import { ChevronLeft, FileText, Maximize2, Monitor, Share2, X } from "lucide-react";
 import type { GradeResult, Paper, PassageFile, Question, Skill, ViewMode } from "@/lib/types";
 import { gradeAll } from "@/lib/grade";
-import { useAuth } from "@/lib/auth";
 import { getAnswerKeys } from "@/lib/keys";
 import { loadPrefs, loadProgress, loadWordbook, readJson, savePrefs, saveProgress, saveWordbook, storageKeys, writeJson } from "@/lib/storage";
 import { useToast } from "../ui/Toast";
-import { MemberGate } from "../ui/MemberGate";
 import { ShareModal } from "../ui/ShareModal";
 import { AnswerSheet } from "./AnswerSheet";
 import { AudioPlayer, type AudioHandle } from "./AudioPlayer";
@@ -32,7 +30,6 @@ export function PaperWorkspace({
   passages: PassageFile;
 }) {
   const toast = useToast();
-  const { user } = useAuth();
   const pdfRef = useRef<PdfHandle>(null);
   const audioRef = useRef<AudioHandle>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -47,7 +44,6 @@ export function PaperWorkspace({
   const [scale, setScale] = useState(1);
   const [mode, setMode] = useState<ViewMode>(paper.testType);
   const [followId, setFollowId] = useState<string | null>(null);
-  const [gate, setGate] = useState<string | null>(null);
   const [share, setShare] = useState(false);
   const [wordbookOpen, setWordbookOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -119,10 +115,6 @@ export function PaperWorkspace({
   }
 
   function gradePaper() {
-    if (!user?.member) {
-      setGate("对答案");
-      return;
-    }
     const keys = getAnswerKeys(paper.id);
     if (!keys) {
       toast("这套卷还没有答案");
@@ -273,10 +265,6 @@ export function PaperWorkspace({
         </div>
         <h1 className="exam-title">{paper.title}</h1>
         <div className="exam-top-right">
-          <Link href="/pro" className="exam-upgrade">
-            <CircleArrowUp size={14} />
-            <span>升级付费版</span>
-          </Link>
           <button
             type="button"
             className="exam-icon"
@@ -412,7 +400,6 @@ export function PaperWorkspace({
         <SentenceCard
           text={lookup.text}
           rect={lookup.rect}
-          member={Boolean(user?.member)}
           onClose={() => setLookup(null)}
         />
       ) : null}
@@ -420,7 +407,6 @@ export function PaperWorkspace({
         <WordLookupPanel
           text={lookup.text}
           rect={lookup.rect}
-          member={Boolean(user?.member)}
           saved={lookupSaved}
           onAdd={addWord}
           onClose={() => setLookup(null)}
@@ -432,7 +418,6 @@ export function PaperWorkspace({
         onClose={() => setWordbookOpen(false)}
         onDelete={removeWord}
       />
-      <MemberGate open={Boolean(gate)} onClose={() => setGate(null)} feature={gate ?? ""} />
       <ShareModal open={share} onClose={() => setShare(false)} title={paper.title} url={shareUrl} />
     </div>
   );

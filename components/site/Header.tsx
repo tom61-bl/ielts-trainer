@@ -61,12 +61,6 @@ export function Header() {
             </button>
           )}
           <ThemeToggle iconOnly />
-          <Link href="/pro" className="upgrade-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <path d="M6 3h12l4 7-10 11L2 10l4-7z" />
-            </svg>
-            <span>升级付费版</span>
-          </Link>
           <button className="btn btn-ghost px-3 lg:hidden" onClick={() => setMenu(true)} aria-label="打开菜单">
             <Menu size={18} />
           </button>
@@ -82,9 +76,6 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <Link href="/pro" className="btn btn-text justify-start" onClick={() => setMenu(false)}>
-            升级付费版
-          </Link>
           {user ? (
             <button
               className="btn btn-ghost mt-3"

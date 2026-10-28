@@ -156,20 +156,3 @@ export interface PrivatePaperMeta {
   bytes: number;
 }
 
-declare global {
-  interface Window {
-    ieltsGlobal?: {
-      docInfo: {
-        paperId: string;
-        title: string;
-        module: Module;
-        testType: ViewMode;
-        sections: number;
-      };
-      price: {
-        memberFee: number;
-        speakingCorrection: number;
-      };
-    };
-  }
-}

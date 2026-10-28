@@ -31,7 +31,7 @@ export function LoginForm({ onDone }: { onDone?: () => void }) {
   return (
     <form onSubmit={submit} className="space-y-3">
       <p className="text-sm leading-7 text-muted">
-        账号只存在这台浏览器里，用来演示登录、私有卷和会员门控。密码经过本地摘要后再保存，没有服务器。
+        账号只存在这台浏览器里，用来登录和导入私有卷。密码经过本地摘要后再保存，没有服务器。
       </p>
       {mode === "register" ? (
         <label className="block text-sm">

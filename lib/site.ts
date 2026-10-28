@@ -1,7 +1,5 @@
 export const site = {
   name: "雅思真题在线",
-  memberFee: 9.9,
-  speakingCorrection: 10,
   contactEmail: "",
 };
 

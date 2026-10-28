@@ -22,7 +22,6 @@ export function Footer() {
           </p>
           <p className="flex gap-4">
             <Link href="/help">帮助与合规</Link>
-            <Link href="/pro">会员说明</Link>
           </p>
         </div>
       </div>

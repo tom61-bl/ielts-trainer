@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useAuth } from "@/lib/auth";
 import { getWritingSample } from "@/lib/keys";
 import { readJson, storageKeys, writeJson } from "@/lib/storage";
 import type { WritingTask } from "@/lib/types";
-import { MemberGate } from "../ui/MemberGate";
 import { useToast } from "../ui/Toast";
 
 function countWords(text: string) {
@@ -15,7 +13,6 @@ function countWords(text: string) {
 }
 
 export function WritingDesk({ tasks }: { tasks: WritingTask[] }) {
-  const { user } = useAuth();
   const toast = useToast();
   const [currentId, setCurrentId] = useState(tasks[0]?.id ?? "");
   const task = tasks.find((item) => item.id === currentId) ?? tasks[0];
@@ -23,7 +20,6 @@ export function WritingDesk({ tasks }: { tasks: WritingTask[] }) {
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(false);
   const [sample, setSample] = useState<string | null>(null);
-  const [gate, setGate] = useState(false);
   const words = useMemo(() => countWords(text), [text]);
 
   useEffect(() => {
@@ -47,10 +43,6 @@ export function WritingDesk({ tasks }: { tasks: WritingTask[] }) {
 
   function openSample() {
     if (!task) return;
-    if (!user?.member) {
-      setGate(true);
-      return;
-    }
     const sampleText = getWritingSample(task.id);
     if (!sampleText) {
       toast("范文没有打开");
@@ -140,15 +132,12 @@ export function WritingDesk({ tasks }: { tasks: WritingTask[] }) {
           <button className="btn btn-accent" onClick={() => void openSample()}>
             看范文
           </button>
-          <p className="self-center text-xs text-muted">
-            {user?.member ? "会员可见范文。" : "未解锁时会先看到会员说明，草稿不会丢。"}
-          </p>
+          <p className="self-center text-xs text-muted">范文可以直接看。草稿留在这台浏览器。</p>
         </div>
         {sample ? (
           <article className="mt-4 whitespace-pre-wrap rounded-xl bg-primary-soft p-4 text-sm leading-7">{sample}</article>
         ) : null}
       </section>
-      <MemberGate open={gate} onClose={() => setGate(false)} feature="写作范文" />
     </div>
   );
 }
