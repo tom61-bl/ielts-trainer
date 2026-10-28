@@ -34,7 +34,13 @@ export function speakEnglish(
     utter.lang = "en-GB";
     utter.rate = 0.9;
     const voice = pickEnglishVoice(synth.getVoices());
-    if (voice) utter.voice = voice;
+    if (voice) {
+      try {
+        utter.voice = voice as SpeechSynthesisVoice;
+      } catch {
+        utter.lang = voice.lang || "en-GB";
+      }
+    }
     utter.onstart = () => hooks?.onStart?.();
     utter.onend = () => hooks?.onEnd?.();
     utter.onerror = () => hooks?.onEnd?.();
