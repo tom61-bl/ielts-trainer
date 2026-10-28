@@ -10,6 +10,7 @@ export const storageKeys = {
   privatePapers: "ielts:private-papers",
   writing: (taskId: string) => `ielts:writing:${taskId}`,
   speaking: (promptId: string) => `ielts:speaking:${promptId}`,
+  ink: (paperId: string) => `ielts:ink:${paperId}`,
 };
 
 const defaultPrefs: Prefs = { theme: "light", scale: 1 };

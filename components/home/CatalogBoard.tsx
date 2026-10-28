@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { AudioLines, Bell, BookMarked, Columns2, MousePointer2 } from "lucide-react";
+import { AudioLines, Bell, BookMarked, Columns2, Highlighter, Languages, MousePointer2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listPrivatePapers, savePrivatePaper } from "@/lib/private";
 import { loadWordbook, saveWordbook } from "@/lib/storage";
@@ -37,6 +37,18 @@ const features = [
     label: "纸笔 / 机考",
     icon: Columns2,
     body: "同一份卷可以翻 PDF，也可以换成机考的左右分栏。右上角随时切回去。",
+  },
+  {
+    id: "translate",
+    label: "句子翻译",
+    icon: Languages,
+    body: "打开试卷后点「译句」，再拖选一句正文。选区下面会出现中文，原文留下虚线下划线。译文是按这三套模拟卷逐句写的，会员才能看。",
+  },
+  {
+    id: "ink",
+    label: "手写高亮",
+    icon: Highlighter,
+    body: "点「高亮」，选黄、粉、绿、蓝里的一支，在句子上拖一下。笔迹像荧光笔，只留在这台浏览器。橡皮擦掉划过的那一笔，清空抹掉这套卷的全部笔迹。",
   },
   {
     id: "words",

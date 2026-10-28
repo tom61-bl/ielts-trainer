@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { GradeResult, Paper, PassageFile, Question, Skill, ViewMode } from "@/lib/types";
 import { useAuth } from "@/lib/auth";
-import { loadPrefs, loadProgress, loadWordbook, savePrefs, saveProgress, saveWordbook } from "@/lib/storage";
+import { loadPrefs, loadProgress, loadWordbook, readJson, savePrefs, saveProgress, saveWordbook, storageKeys, writeJson } from "@/lib/storage";
 import { useToast } from "../ui/Toast";
 import { MemberGate } from "../ui/MemberGate";
 import { ShareModal } from "../ui/ShareModal";
@@ -14,6 +14,9 @@ import { PdfViewer, type PdfHandle } from "./PdfViewer";
 import { ViewerToolbar } from "./ViewerToolbar";
 import { WordLookupPanel } from "../wordbook/WordLookupPanel";
 import { WordbookDrawer } from "../wordbook/WordbookDrawer";
+import { SentenceCard } from "./SentenceCard";
+import { StudyTools, type StudyTool } from "./StudyTools";
+import type { InkColor, InkMark } from "./inkLayer";
 
 export function PaperWorkspace({
   paper,
@@ -48,6 +51,10 @@ export function PaperWorkspace({
   const [desktop, setDesktop] = useState(false);
   const [lookup, setLookup] = useState<{ text: string; rect: DOMRect } | null>(null);
   const [shareUrl, setShareUrl] = useState("");
+  const [tool, setTool] = useState<StudyTool>("lookup");
+  const [inkColor, setInkColor] = useState<InkColor>("sun");
+  const [erasing, setErasing] = useState(false);
+  const [marks, setMarks] = useState<InkMark[]>([]);
 
   useEffect(() => {
     const progress = loadProgress(paper.id);
@@ -56,6 +63,7 @@ export function PaperWorkspace({
     setScale(loadPrefs().scale || 1);
     setShareUrl(window.location.href);
     setWords(loadWordbook());
+    setMarks(readJson<InkMark[]>(storageKeys.ink(paper.id), []));
     const media = window.matchMedia("(min-width: 1024px)");
     const apply = () => setDesktop(media.matches);
     apply();
@@ -71,6 +79,11 @@ export function PaperWorkspace({
     }, 500);
     return () => window.clearTimeout(timer);
   }, [answers, visited, ready, paper.id]);
+
+  useEffect(() => {
+    if (!ready) return;
+    writeJson(storageKeys.ink(paper.id), marks);
+  }, [marks, ready, paper.id]);
 
   const listening = useMemo(
     () => questions.filter((question) => question.skill === "listening" && question.audioAnchor != null),
@@ -137,6 +150,25 @@ export function PaperWorkspace({
     toast("已加入生词本");
   }
 
+  function markText(text: string, page: number, surface: InkMark["surface"]) {
+    const clean = text.replace(/\s+/g, " ").trim();
+    if (clean.length < 2) return;
+    setMarks((current) => {
+      if (erasing) {
+        return current.filter(
+          (mark) =>
+            !(
+              mark.surface === surface &&
+              mark.page === page &&
+              (clean.includes(mark.text) || mark.text.includes(clean))
+            ),
+        );
+      }
+      if (current.some((mark) => mark.text === clean && mark.page === page && mark.surface === surface)) return current;
+      return [...current, { id: crypto.randomUUID(), page, text: clean, color: inkColor, surface }].slice(-200);
+    });
+  }
+
   function removeWord(id: string) {
     const next = words.filter((item) => item.id !== id);
     setWords(next);
@@ -159,8 +191,12 @@ export function PaperWorkspace({
     />
   );
 
+  const sentence = Boolean(
+    lookup && (tool === "translate" || lookup.text.trim().split(/\s+/).length >= 4),
+  );
+
   return (
-    <div ref={rootRef} className="flex min-h-[calc(100vh-4rem)] flex-col bg-bg">
+    <div ref={rootRef} className="flex h-[100dvh] flex-col bg-bg">
       <ViewerToolbar
         className="hidden lg:flex"
         title={paper.title}
@@ -181,8 +217,27 @@ export function PaperWorkspace({
         }}
         onShare={() => setShare(true)}
       />
+      <StudyTools
+        tool={tool}
+        color={inkColor}
+        erasing={erasing}
+        onTool={(next) => {
+          setTool(next);
+          setErasing(false);
+          setLookup(null);
+        }}
+        onColor={(next) => {
+          setInkColor(next);
+          setErasing(false);
+        }}
+        onErase={() => {
+          setTool("ink");
+          setErasing(true);
+        }}
+        onClear={() => setMarks([])}
+      />
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div className="min-h-[50vh] min-w-0 flex-1 lg:h-[calc(100vh-8.5rem)]">
+        <div className="min-h-0 min-w-0 flex-1">
           {mode === "paper" ? (
             <PdfViewer
               ref={pdfRef}
@@ -197,6 +252,9 @@ export function PaperWorkspace({
               onOpen={(id) => void selectQuestion(id)}
               onChange={(id, value) => setAnswers((current) => ({ ...current, [id]: value }))}
               onSelectText={(text, rect) => setLookup({ text, rect })}
+              tool={tool}
+              marks={marks}
+              onInk={(text, page) => markText(text, page, "paper")}
             />
           ) : (
             <ComputerPane
@@ -211,11 +269,14 @@ export function PaperWorkspace({
                 setVisited((current) => (current.includes(id) ? current : [...current, id]));
               }}
               onSelectText={(text, rect) => setLookup({ text, rect })}
+              tool={tool}
+              marks={marks}
+              onInk={(text, page) => markText(text, page, "computer")}
             />
           )}
         </div>
         {desktop ? (
-        <aside className="flex w-[340px] shrink-0 flex-col border-l border-line bg-surface lg:h-[calc(100vh-8.5rem)]">
+        <aside className="flex min-h-0 w-full shrink-0 flex-col border-l border-line bg-surface lg:h-auto lg:w-[340px]">
           <AudioPlayer
             ref={audioRef}
             src={paper.audioUrl}
@@ -299,7 +360,15 @@ export function PaperWorkspace({
         ) : null}
       </div>
 
-      {lookup ? (
+      {lookup && sentence ? (
+        <SentenceCard
+          text={lookup.text}
+          rect={lookup.rect}
+          member={Boolean(user?.member)}
+          onClose={() => setLookup(null)}
+        />
+      ) : null}
+      {lookup && !sentence ? (
         <WordLookupPanel
           text={lookup.text}
           rect={lookup.rect}

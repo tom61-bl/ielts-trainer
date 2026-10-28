@@ -3,6 +3,8 @@
 import { useState } from "react";
 import type { GradeResult, PassageFile, Question, Skill } from "@/lib/types";
 import { AnswerControl } from "./AnswerControl";
+import { paintPlain, type InkMark } from "./inkLayer";
+import type { StudyTool } from "./StudyTools";
 
 export function ComputerPane({
   file,
@@ -13,6 +15,9 @@ export function ComputerPane({
   activeId,
   onChange,
   onSelectText,
+  tool = "lookup",
+  marks = [],
+  onInk,
 }: {
   file: PassageFile;
   questions: Question[];
@@ -22,6 +27,9 @@ export function ComputerPane({
   activeId: string | null;
   onChange: (id: string, value: string) => void;
   onSelectText: (text: string, rect: DOMRect) => void;
+  tool?: StudyTool;
+  marks?: InkMark[];
+  onInk?: (text: string, page: number) => void;
 }) {
   const passages = file.passages;
   const [section, setSection] = useState(passages[0]?.section ?? 1);
@@ -34,12 +42,17 @@ export function ComputerPane({
     if (!selection || selection.isCollapsed) return;
     const text = selection.toString().replace(/\s+/g, " ").trim();
     if (!text || text.length > 500) return;
+    if (tool === "ink") {
+      onInk?.(text, passage?.section ?? 1);
+      selection.removeAllRanges();
+      return;
+    }
     onSelectText(text, selection.getRangeAt(0).getBoundingClientRect());
   }
 
   return (
     <div className="grid h-full min-h-0 lg:grid-cols-2">
-      <div className="min-h-0 overflow-auto border-b border-line p-5 lg:border-b-0 lg:border-r" onMouseUp={onMouseUp}>
+      <div className={`min-h-0 overflow-auto border-b border-line p-5 lg:border-b-0 lg:border-r ${tool === "ink" ? "ink-on" : ""}`} onMouseUp={onMouseUp}>
         {skill === "reading" && passage ? (
           <>
             <div className="mb-4 flex flex-wrap gap-2">
@@ -58,7 +71,18 @@ export function ComputerPane({
               {passage.paragraphs.map((paragraph, index) => (
                 <p key={`${paragraph.label}-${index}`}>
                   {paragraph.label ? <strong className="mr-2">{paragraph.label}</strong> : null}
-                  {paragraph.text}
+                  {paintPlain(
+                    paragraph.text,
+                    marks.filter((mark) => mark.surface === "computer"),
+                  ).map((part, index) =>
+                    part.color ? (
+                      <mark key={`${part.id}-${index}`} className={`passage-ink ink-${part.color}`}>
+                        {part.text}
+                      </mark>
+                    ) : (
+                      <span key={`t-${index}`}>{part.text}</span>
+                    ),
+                  )}
                 </p>
               ))}
             </div>

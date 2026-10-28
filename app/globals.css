@@ -655,3 +655,117 @@ a {
     bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   }
 }
+
+.study-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 4px 10px;
+}
+
+.study-tool {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  height: 36px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: 0 8px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.study-tool[aria-pressed="true"] {
+  border-bottom-color: var(--text);
+  color: var(--text);
+}
+
+.study-pens {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.pen {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.pen[aria-pressed="true"] {
+  border-color: var(--text);
+}
+
+.pen-sun { background: #ffe56a; }
+.pen-rose { background: #ffb3c2; }
+.pen-mint { background: #9be7b4; }
+.pen-sky { background: #9dceff; }
+
+.textLayer span.ink-mark {
+  border-radius: 2px;
+  box-shadow: inset 0 -0.55em 0 rgba(255, 255, 255, 0.15);
+}
+
+.ink-sun { background: rgba(255, 214, 64, 0.62); }
+.ink-rose { background: rgba(255, 150, 176, 0.55); }
+.ink-mint { background: rgba(120, 220, 156, 0.55); }
+.ink-sky { background: rgba(130, 196, 255, 0.6); }
+
+.passage-ink {
+  color: inherit;
+  border-radius: 0.15em;
+  padding: 0 0.05em;
+  box-decoration-break: clone;
+}
+
+.ink-on,
+.ink-on .textLayer {
+  cursor: crosshair;
+}
+
+.sentence-card {
+  position: fixed;
+  z-index: 60;
+  width: min(328px, calc(100vw - 16px));
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 14px 14px 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+}
+
+.sentence-kicker {
+  margin: 0;
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+
+.sentence-en {
+  margin: 8px 0 0;
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.sentence-zh {
+  margin-top: 10px;
+  border-top: 2px dotted #8a8175;
+  padding-top: 8px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+::highlight(sentence) {
+  text-decoration: underline dotted #5c5346;
+  text-underline-offset: 3px;
+}

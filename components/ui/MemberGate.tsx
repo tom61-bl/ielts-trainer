@@ -19,7 +19,7 @@ export function MemberGate({
       <ul className="mt-4 space-y-2 text-sm leading-7 text-muted">
         <li>对答案，并看到一句解释</li>
         <li>写作范文</li>
-        <li>选中单词后的音标和释义</li>
+        <li>选中单词后的音标和释义，以及整句译文</li>
         <li>口语批改额度仍是占位，价格 ¥{site.speakingCorrection}</li>
       </ul>
       <p className="mt-4 text-sm">

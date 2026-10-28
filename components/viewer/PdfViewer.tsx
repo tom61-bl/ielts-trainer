@@ -8,7 +8,11 @@ import {
   useState,
 } from "react";
 import type { GradeResult, Question } from "@/lib/types";
+import { applyInkMarks, type InkMark } from "./inkLayer";
+import type { StudyTool } from "./StudyTools";
 import { QuestionMarker } from "./QuestionMarker";
+
+const noMarks: InkMark[] = [];
 
 export type PdfHandle = {
   goToPage: (page: number) => void;
@@ -40,9 +44,27 @@ export const PdfViewer = forwardRef<
     onOpen: (id: string) => void;
     onChange: (id: string, value: string) => void;
     onSelectText: (text: string, rect: DOMRect) => void;
+    tool?: StudyTool;
+    marks?: InkMark[];
+    onInk?: (text: string, page: number) => void;
   }
 >(function PdfViewer(
-  { url, scale, questions, answers, activeId, highlightId, grade, onPage, onOpen, onChange, onSelectText },
+  {
+    url,
+    scale,
+    questions,
+    answers,
+    activeId,
+    highlightId,
+    grade,
+    onPage,
+    onOpen,
+    onChange,
+    onSelectText,
+    tool = "lookup",
+    marks = noMarks,
+    onInk,
+  },
   ref,
 ) {
   const [pdf, setPdf] = useState<PdfDocument | null>(null);
@@ -109,11 +131,17 @@ export const PdfViewer = forwardRef<
     const rect = selection.getRangeAt(0).getBoundingClientRect();
     if (!rect.width && !rect.height) return;
     event.stopPropagation();
+    if (tool === "ink") {
+      const page = Number((event.target as HTMLElement).closest?.("[data-page]")?.getAttribute("data-page") ?? 1);
+      onInk?.(text, page);
+      selection.removeAllRanges();
+      return;
+    }
     onSelectText(text, rect);
   }
 
   return (
-    <div ref={scrollerRef} className="h-full overflow-auto" onMouseUp={onMouseUp}>
+    <div ref={scrollerRef} className={`h-full overflow-auto ${tool === "ink" ? "ink-on" : ""}`} onMouseUp={onMouseUp}>
       {error ? (
         <div className="m-6 rounded-xl border border-line bg-surface p-6">
           <p className="font-medium">试卷没有载入</p>
@@ -143,6 +171,7 @@ export const PdfViewer = forwardRef<
                   onPage(pageNumber);
                   setStatus(`第 ${pageNumber} / ${pdf.numPages} 页`);
                 }}
+                marks={marks.filter((mark) => mark.surface === "paper" && mark.page === pageNumber)}
               >
                 {pageQuestions.map((question) => (
                   <QuestionMarker
@@ -170,6 +199,7 @@ function PdfPage({
   scale,
   onReady,
   onVisible,
+  marks,
   children,
 }: {
   pdf: PdfDocument;
@@ -177,6 +207,7 @@ function PdfPage({
   scale: number;
   onReady: (node: HTMLElement | null, ensure: () => Promise<void>) => void;
   onVisible: () => void;
+  marks: InkMark[];
   children: React.ReactNode;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
@@ -184,8 +215,10 @@ function PdfPage({
   const textRef = useRef<HTMLDivElement>(null);
   const onReadyRef = useRef(onReady);
   const onVisibleRef = useRef(onVisible);
+  const marksRef = useRef(marks);
   onReadyRef.current = onReady;
   onVisibleRef.current = onVisible;
+  marksRef.current = marks;
   const [height, setHeight] = useState(760 * scale * 1.414);
   const width = 760 * scale;
 
@@ -226,6 +259,7 @@ function PdfPage({
           viewport: viewport as ConstructorParameters<typeof pdfjs.TextLayer>[0]["viewport"],
         });
         await layer.render();
+        applyInkMarks(textLayer, marksRef.current);
       } catch {
         /* the page image is still usable without a text layer */
       }
@@ -248,6 +282,21 @@ function PdfPage({
       observer.disconnect();
     };
   }, [pdf, pageNumber, width]);
+
+  const markKey = marks.map((mark) => mark.id).join("|");
+
+  useEffect(() => {
+    const layer = textRef.current;
+    if (!layer) return;
+    const paint = () => {
+      if (!layer.childNodes.length) return;
+      applyInkMarks(layer, marksRef.current);
+      layer.dataset.ink = String(marksRef.current.length);
+    };
+    paint();
+    const frame = requestAnimationFrame(paint);
+    return () => cancelAnimationFrame(frame);
+  }, [markKey]);
 
   return (
     <article ref={shellRef} className="mx-auto my-4 w-fit" data-page={pageNumber}>
