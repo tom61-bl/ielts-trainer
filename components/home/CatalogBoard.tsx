@@ -1,9 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { AudioLines, Bell, BookMarked, Columns2, MousePointer2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listPrivatePapers, savePrivatePaper } from "@/lib/private";
-import type { Module, Paper, ViewMode } from "@/lib/types";
+import { loadWordbook, saveWordbook } from "@/lib/storage";
+import type { Module, Paper, ViewMode, WordEntry } from "@/lib/types";
+import { WordbookDrawer } from "../wordbook/WordbookDrawer";
+import { Modal } from "../ui/Modal";
 import { useToast } from "../ui/Toast";
 import { PaperCard } from "./PaperCard";
 
@@ -14,20 +19,52 @@ const skills = [
   { id: "writing", label: "写作" },
 ] as const;
 
+const features = [
+  {
+    id: "lookup",
+    label: "取词查词",
+    icon: MousePointer2,
+    body: "打开任意一套卷，在 PDF 上拖选单词。弹层里可以听音、看释义，并把词收进左下角的生词本。释义在会员解锁后显示。",
+  },
+  {
+    id: "audio",
+    label: "听力锚点",
+    icon: AudioLines,
+    body: "听力题号和答题卡是同一套锚点。点题号，播放头跳到那一句，不用自己拖进度条。",
+  },
+  {
+    id: "layout",
+    label: "纸笔 / 机考",
+    icon: Columns2,
+    body: "同一份卷可以翻 PDF，也可以换成机考的左右分栏。右上角随时切回去。",
+  },
+  {
+    id: "words",
+    label: "生词本",
+    icon: BookMarked,
+    body: "收过的词留在这台浏览器里，可以搜索、删除，并导出 CSV 或 Anki。",
+  },
+] as const;
+
 export function CatalogBoard({
   papers,
+  totals,
   initialSkill = "all",
 }: {
   papers: Paper[];
+  totals: Record<string, number>;
   initialSkill?: string;
 }) {
-  const { user, setLoginOpen } = useAuth();
+  const { user, setLoginOpen, logout } = useAuth();
   const toast = useToast();
   const [skill, setSkill] = useState(initialSkill);
   const [moduleFilter, setModuleFilter] = useState<"all" | Module>("all");
   const [typeFilter, setTypeFilter] = useState<"all" | ViewMode>("all");
   const [privatePapers, setPrivatePapers] = useState<Paper[]>([]);
   const [loadedOwner, setLoadedOwner] = useState<string | null>(null);
+  const [feature, setFeature] = useState<(typeof features)[number] | null>(null);
+  const [wordsOpen, setWordsOpen] = useState(false);
+  const [words, setWords] = useState<WordEntry[] | null>(null);
 
   if (user && loadedOwner !== user.id) {
     setLoadedOwner(user.id);
@@ -63,6 +100,31 @@ export function CatalogBoard({
       return true;
     });
   }, [papers, privatePapers, moduleFilter, typeFilter, skill]);
+
+  const maxBook = papers.reduce((max, paper) => Math.max(max, paper.book), 0);
+
+  const groups = useMemo(() => {
+    const map = new Map<string, Paper[]>();
+    for (const paper of visible) {
+      const key = paper.visibility === "private" ? "private" : `b${paper.book}`;
+      const list = map.get(key) ?? [];
+      list.push(paper);
+      map.set(key, list);
+    }
+    return [...map.keys()]
+      .sort((a, b) => {
+        if (a === "private") return 1;
+        if (b === "private") return -1;
+        return Number(b.slice(1)) - Number(a.slice(1));
+      })
+      .map((key) => ({ key, items: map.get(key) ?? [] }));
+  }, [visible]);
+
+  function openWords() {
+    setWords(loadWordbook());
+    setWordsOpen(true);
+    setFeature(null);
+  }
 
   async function onFile(file: File | undefined) {
     if (!file) return;
@@ -108,30 +170,38 @@ export function CatalogBoard({
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-2">
+    <div className="catalog">
+      <h1 className="catalog-title">雅思真题</h1>
+      <p className="catalog-count">自研模拟 · 学术类与培训类，共 {papers.length} 套</p>
+      <div className="feature-row">
+        {features.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button key={item.id} type="button" onClick={() => (item.id === "words" ? openWords() : setFeature(item))}>
+              <Icon size={18} strokeWidth={1.7} aria-hidden="true" />
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+      <div className="notice-banner">
+        <Bell size={22} aria-hidden="true" />
+        <span>这些是自研模拟卷，用来按完整试卷练习。官方考试日期以报名系统为准。</span>
+      </div>
+      <div className="catalog-filters">
         {skills.map((item) => (
-          <button
-            key={item.id}
-            className={`btn h-10 px-3 text-sm ${skill === item.id ? "btn-primary" : "btn-ghost"}`}
-            onClick={() => setSkill(item.id)}
-          >
+          <button key={item.id} type="button" aria-pressed={skill === item.id} onClick={() => setSkill(item.id)}>
             {item.label}
           </button>
         ))}
-        <span className="mx-1 hidden w-px bg-line sm:block" />
         {(
           [
             ["all", "全部模块"],
-            ["academic", "Academic"],
-            ["general", "General"],
+            ["academic", "学术类"],
+            ["general", "培训类"],
           ] as const
         ).map(([id, label]) => (
-          <button
-            key={id}
-            className={`btn h-10 px-3 text-sm ${moduleFilter === id ? "btn-primary" : "btn-ghost"}`}
-            onClick={() => setModuleFilter(id)}
-          >
+          <button key={id} type="button" aria-pressed={moduleFilter === id} onClick={() => setModuleFilter(id)}>
             {label}
           </button>
         ))}
@@ -144,16 +214,15 @@ export function CatalogBoard({
         ).map(([id, label]) => (
           <button
             key={`type-${id}`}
-            className={`btn h-10 px-3 text-sm ${typeFilter === id ? "btn-primary" : "btn-ghost"}`}
+            type="button"
+            aria-pressed={typeFilter === id}
             onClick={() => setTypeFilter(id)}
           >
             {label}
           </button>
         ))}
-      </div>
-      <div className="mt-4">
         {user ? (
-          <label className="btn btn-ghost cursor-pointer">
+          <label>
             导入私有卷
             <input
               type="file"
@@ -163,23 +232,77 @@ export function CatalogBoard({
             />
           </label>
         ) : (
-          <button className="btn btn-ghost" onClick={() => setLoginOpen(true)}>
+          <button type="button" onClick={() => setLoginOpen(true)}>
             登录后导入私有卷
           </button>
         )}
-        <p className="mt-2 text-sm text-muted">私有 PDF 只写在这台浏览器里，不会上传。</p>
       </div>
-      {visible.length === 0 ? (
-        <p className="mt-8 rounded-xl border border-dashed border-line p-6 text-sm text-muted">
-          这个筛选下还没有试卷。
-        </p>
+
+      {groups.length === 0 ? (
+        <p className="mx-auto mt-10 max-w-md px-4 text-center text-sm text-muted">这个筛选下还没有试卷。</p>
       ) : (
-        <div className="mt-6 grid gap-4">
-          {visible.map((paper) => (
-            <PaperCard key={paper.id} paper={paper} />
-          ))}
-        </div>
+        groups.map((group, index) => (
+          <section className="period" key={group.key} id={group.key === "private" ? "private-papers" : `series-${group.key.slice(1)}`}>
+            <h2>{group.key === "private" ? "私有卷" : `系列 ${group.key.slice(1).padStart(2, "0")}`}</h2>
+            {group.key === `b${maxBook}` ? (
+              <p className="period-note">最新一组。封面点进去就是整套卷，听力题号会跳到对应的一句。</p>
+            ) : null}
+            {group.key === "private" ? (
+              <p className="period-note">只在这台浏览器、这个账号下可见，不会上传。</p>
+            ) : null}
+            <div className="year-rail">
+              {group.items.map((paper) => (
+                <PaperCard
+                  key={paper.id}
+                  paper={paper}
+                  total={totals[paper.id] ?? 0}
+                  fresh={paper.book === maxBook && paper.visibility !== "private"}
+                />
+              ))}
+            </div>
+            {index < groups.length - 1 ? <hr className="period-rule" /> : null}
+          </section>
+        ))
       )}
+
+      <aside className="quick-rail" aria-label="快捷入口">
+        {user ? (
+          <button type="button" onClick={logout}>
+            {user.name}
+          </button>
+        ) : (
+          <button type="button" onClick={() => setLoginOpen(true)}>
+            登录
+          </button>
+        )}
+        <Link href="/speaking">口语</Link>
+        <Link href="/writing">写作</Link>
+        <Link href="/help">帮助</Link>
+      </aside>
+      <button type="button" className="wordbook-fab" onClick={openWords}>
+        生词本
+      </button>
+
+      <Modal open={Boolean(feature)} onClose={() => setFeature(null)} title={feature?.label}>
+        {feature ? (
+          <div className="space-y-4 text-sm leading-7">
+            <p>{feature.body}</p>
+            <Link href="/ielts/qingjuan-a2" className="btn btn-primary">
+              打开最新一套
+            </Link>
+          </div>
+        ) : null}
+      </Modal>
+      <WordbookDrawer
+        open={wordsOpen}
+        entries={words ?? []}
+        onClose={() => setWordsOpen(false)}
+        onDelete={(id) => {
+          const next = (words ?? loadWordbook()).filter((entry) => entry.id !== id);
+          setWords(next);
+          saveWordbook(next);
+        }}
+      />
     </div>
   );
 }

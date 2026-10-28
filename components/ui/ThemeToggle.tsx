@@ -17,7 +17,7 @@ function applyTheme(theme: ThemeName) {
   else document.documentElement.setAttribute("data-theme", theme);
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ iconOnly = false }: { iconOnly?: boolean }) {
   const [theme, setTheme] = useState<ThemeName>("light");
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export function ThemeToggle() {
   return (
     <button className="btn btn-ghost px-3" onClick={cycle} aria-label={`主题：${label[theme]}，点击切换`}>
       <Icon size={16} />
-      <span className="text-sm">{label[theme]}</span>
+      <span className={iconOnly ? "sr-only" : "text-sm"}>{label[theme]}</span>
     </button>
   );
 }

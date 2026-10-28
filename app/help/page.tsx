@@ -30,8 +30,8 @@ export default function HelpPage() {
     <main className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="font-serif text-4xl">帮助</h1>
       <ol className="mt-6 space-y-3 text-sm leading-7">
-        <li>1. 从首页进入听力、阅读、写作或口语。</li>
-        <li>2. 在目录里按学术类 / 培训类、纸笔 / 机考筛选。</li>
+        <li>1. 首页就是试卷目录，点封面进入一整套。</li>
+        <li>2. 需要时再按学术类 / 培训类、纸笔 / 机考、科目筛选。</li>
         <li>3. 打开试卷后，用答题卡定位。纸笔模式翻 PDF，机考模式左右分栏。</li>
         <li>4. 选中单词可以收入生词本，再导出 CSV 或 Anki。</li>
       </ol>

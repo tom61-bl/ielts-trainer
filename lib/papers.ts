@@ -34,6 +34,10 @@ export function getPapers(): Paper[] {
     .sort((a, b) => b.book - a.book || a.module.localeCompare(b.module) || b.test - a.test);
 }
 
+export function questionTotals(): Record<string, number> {
+  return Object.fromEntries(Object.entries(questionMap).map(([id, questions]) => [id, questions.length]));
+}
+
 export function getPaper(id: string) {
   return getPapers().find((paper) => paper.id === id) ?? null;
 }
