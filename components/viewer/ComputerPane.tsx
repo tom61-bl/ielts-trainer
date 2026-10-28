@@ -51,7 +51,7 @@ export function ComputerPane({
   }
 
   return (
-    <div className="grid h-full min-h-0 lg:grid-cols-2">
+    <div className="computer-board grid h-full min-h-0 lg:grid-cols-2">
       <div className={`min-h-0 overflow-auto border-b border-line p-5 lg:border-b-0 lg:border-r ${tool === "ink" ? "ink-on" : ""}`} onMouseUp={onMouseUp}>
         {skill === "reading" && passage ? (
           <>

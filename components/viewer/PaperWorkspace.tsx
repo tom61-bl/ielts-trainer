@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { ChevronLeft, CircleArrowUp, FileText, Maximize2, Monitor, Share2, X } from "lucide-react";
 import type { GradeResult, Paper, PassageFile, Question, Skill, ViewMode } from "@/lib/types";
 import { gradeAll } from "@/lib/grade";
 import { useAuth } from "@/lib/auth";
@@ -13,7 +15,7 @@ import { AnswerSheet } from "./AnswerSheet";
 import { AudioPlayer, type AudioHandle } from "./AudioPlayer";
 import { ComputerPane } from "./ComputerPane";
 import { PdfViewer, type PdfHandle } from "./PdfViewer";
-import { ViewerToolbar } from "./ViewerToolbar";
+import { ThemeToggle } from "../ui/ThemeToggle";
 import { WordLookupPanel } from "../wordbook/WordLookupPanel";
 import { WordbookDrawer } from "../wordbook/WordbookDrawer";
 import { SentenceCard } from "./SentenceCard";
@@ -30,7 +32,7 @@ export function PaperWorkspace({
   passages: PassageFile;
 }) {
   const toast = useToast();
-  const { user, setLoginOpen } = useAuth();
+  const { user } = useAuth();
   const pdfRef = useRef<PdfHandle>(null);
   const audioRef = useRef<AudioHandle>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -48,15 +50,17 @@ export function PaperWorkspace({
   const [gate, setGate] = useState<string | null>(null);
   const [share, setShare] = useState(false);
   const [wordbookOpen, setWordbookOpen] = useState(false);
-  const [mobilePanel, setMobilePanel] = useState<"sheet" | "audio" | "words" | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [scriptOpen, setScriptOpen] = useState(false);
   const [words, setWords] = useState<ReturnType<typeof loadWordbook>>([]);
-  const [desktop, setDesktop] = useState(false);
   const [lookup, setLookup] = useState<{ text: string; rect: DOMRect } | null>(null);
   const [shareUrl, setShareUrl] = useState("");
   const [tool, setTool] = useState<StudyTool>("lookup");
   const [inkColor, setInkColor] = useState<InkColor>("sun");
   const [erasing, setErasing] = useState(false);
   const [marks, setMarks] = useState<InkMark[]>([]);
+  const [past, setPast] = useState<InkMark[][]>([]);
+  const [future, setFuture] = useState<InkMark[][]>([]);
 
   useEffect(() => {
     const progress = loadProgress(paper.id);
@@ -66,12 +70,9 @@ export function PaperWorkspace({
     setShareUrl(window.location.href);
     setWords(loadWordbook());
     setMarks(readJson<InkMark[]>(storageKeys.ink(paper.id), []));
-    const media = window.matchMedia("(min-width: 1024px)");
-    const apply = () => setDesktop(media.matches);
-    apply();
-    media.addEventListener("change", apply);
+    setPast([]);
+    setFuture([]);
     setReady(true);
-    return () => media.removeEventListener("change", apply);
   }, [paper.id]);
 
   useEffect(() => {
@@ -128,6 +129,8 @@ export function PaperWorkspace({
       return;
     }
     setGrade(gradeAll(keys, answers));
+    setScriptOpen(false);
+    setSheetOpen(true);
     toast("已对答案");
   }
 
@@ -147,12 +150,22 @@ export function PaperWorkspace({
     toast("已加入生词本");
   }
 
+  function commitMarks(recipe: (current: InkMark[]) => InkMark[]) {
+    setMarks((current) => {
+      const next = recipe(current);
+      if (next === current) return current;
+      setPast((items) => [...items, current].slice(-30));
+      setFuture([]);
+      return next;
+    });
+  }
+
   function markText(text: string, page: number, surface: InkMark["surface"]) {
     const clean = text.replace(/\s+/g, " ").trim();
     if (clean.length < 2) return;
-    setMarks((current) => {
+    commitMarks((current) => {
       if (erasing) {
-        return current.filter(
+        const next = current.filter(
           (mark) =>
             !(
               mark.surface === surface &&
@@ -160,9 +173,34 @@ export function PaperWorkspace({
               (clean.includes(mark.text) || mark.text.includes(clean))
             ),
         );
+        return next.length === current.length ? current : next;
       }
       if (current.some((mark) => mark.text === clean && mark.page === page && mark.surface === surface)) return current;
       return [...current, { id: crypto.randomUUID(), page, text: clean, color: inkColor, surface }].slice(-200);
+    });
+  }
+
+  function undoMarks() {
+    setPast((items) => {
+      if (!items.length) return items;
+      const previous = items[items.length - 1];
+      setMarks((current) => {
+        setFuture((queue) => [current, ...queue].slice(0, 30));
+        return previous;
+      });
+      return items.slice(0, -1);
+    });
+  }
+
+  function redoMarks() {
+    setFuture((queue) => {
+      if (!queue.length) return queue;
+      const next = queue[0];
+      setMarks((current) => {
+        setPast((items) => [...items, current].slice(-30));
+        return next;
+      });
+      return queue.slice(1);
     });
   }
 
@@ -191,171 +229,184 @@ export function PaperWorkspace({
   const sentence = Boolean(
     lookup && (tool === "translate" || lookup.text.trim().split(/\s+/).length >= 4),
   );
+  const lookupSaved = Boolean(
+    lookup && words.some((item) => item.word.toLowerCase() === lookup.text.trim().toLowerCase()),
+  );
+
+  function changeScale(next: number) {
+    setScale(next);
+    savePrefs({ ...loadPrefs(), scale: next });
+  }
 
   return (
-    <div ref={rootRef} className="flex h-[100dvh] flex-col bg-bg">
-      <ViewerToolbar
-        className="hidden lg:flex"
-        title={paper.title}
-        page={page}
-        pages={paper.pages}
-        scale={scale}
-        mode={mode}
-        onBackHref="/ielts"
-        onPage={(next) => pdfRef.current?.goToPage(next)}
-        onScale={(next) => {
-          setScale(next);
-          savePrefs({ ...loadPrefs(), scale: next });
-        }}
-        onMode={setMode}
-        onFullscreen={() => {
-          if (document.fullscreenElement) void document.exitFullscreen();
-          else void rootRef.current?.requestFullscreen();
-        }}
-        onShare={() => setShare(true)}
-      />
-      <StudyTools
-        tool={tool}
-        color={inkColor}
-        erasing={erasing}
-        onTool={(next) => {
-          setTool(next);
-          setErasing(false);
-          setLookup(null);
-        }}
-        onColor={(next) => {
-          setInkColor(next);
-          setErasing(false);
-        }}
-        onErase={() => {
-          setTool("ink");
-          setErasing(true);
-        }}
-        onClear={() => setMarks([])}
-      />
-      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div className="min-h-0 min-w-0 flex-1">
-          {mode === "paper" ? (
-            <PdfViewer
-              ref={pdfRef}
-              url={paper.pdfUrl}
-              scale={scale}
-              questions={questions}
-              answers={answers}
-              activeId={activeId}
-              highlightId={highlightId}
-              grade={grade}
-              onPage={setPage}
-              onOpen={(id) => void selectQuestion(id)}
-              onChange={(id, value) => setAnswers((current) => ({ ...current, [id]: value }))}
-              onSelectText={(text, rect) => setLookup({ text, rect })}
-              tool={tool}
-              marks={marks}
-              onInk={(text, page) => markText(text, page, "paper")}
-            />
-          ) : (
-            <ComputerPane
-              file={passages}
-              questions={questions}
-              skill={skill}
-              answers={answers}
-              grade={grade}
-              activeId={activeId}
-              onChange={(id, value) => {
-                setAnswers((current) => ({ ...current, [id]: value }));
-                setVisited((current) => (current.includes(id) ? current : [...current, id]));
-              }}
-              onSelectText={(text, rect) => setLookup({ text, rect })}
-              tool={tool}
-              marks={marks}
-              onInk={(text, page) => markText(text, page, "computer")}
-            />
-          )}
-        </div>
-        {desktop ? (
-        <aside className="flex min-h-0 w-full shrink-0 flex-col border-l border-line bg-surface lg:h-auto lg:w-[340px]">
-          <AudioPlayer
-            ref={audioRef}
-            src={paper.audioUrl}
-            sections={paper.audioSections ?? []}
-            activeSection={activeSection}
-            onTime={followTime}
+    <div ref={rootRef} className="exam-desk">
+      <header className="exam-top">
+        <div className="exam-top-left">
+          <Link href="/ielts" className="exam-icon" aria-label="返回目录">
+            <ChevronLeft size={18} />
+          </Link>
+          <StudyTools
+            tool={tool}
+            color={inkColor}
+            erasing={erasing}
+            scale={scale}
+            canUndo={past.length > 0}
+            canRedo={future.length > 0}
+            onTool={(next) => {
+              setTool(next);
+              setErasing(false);
+              setLookup(null);
+            }}
+            onColor={(next) => {
+              setInkColor(next);
+              setTool("ink");
+              setErasing(false);
+            }}
+            onErase={() => {
+              setTool("ink");
+              setErasing(true);
+            }}
+            onScale={changeScale}
+            onUndo={undoMarks}
+            onRedo={redoMarks}
           />
-          {sheet}
-          <div className="flex flex-wrap gap-2 border-t border-line p-3">
-            <button className="btn btn-accent h-10" onClick={() => void gradePaper()}>
-              对答案
-            </button>
-            <button className="btn btn-ghost h-10" onClick={() => setWordbookOpen(true)}>
-              生词本
-            </button>
-            <button
-              className="btn btn-text h-10"
-              onClick={() => {
-                if (!user) {
-                  setLoginOpen(true);
-                  return;
-                }
-                toast("已保存在本机。跨设备同步还没有接通。");
-              }}
-            >
-              云同步
-            </button>
-          </div>
-        </aside>
+        </div>
+        <h1 className="exam-title">{paper.title}</h1>
+        <div className="exam-top-right">
+          <Link href="/pro" className="exam-upgrade">
+            <CircleArrowUp size={14} />
+            <span>升级付费版</span>
+          </Link>
+          <button
+            type="button"
+            className="exam-icon"
+            aria-pressed={mode === "computer"}
+            aria-label={mode === "paper" ? "切换到机考" : "切换到纸笔"}
+            onClick={() => setMode(mode === "paper" ? "computer" : "paper")}
+          >
+            {mode === "paper" ? <Monitor size={16} /> : <FileText size={16} />}
+          </button>
+          <ThemeToggle iconOnly className="exam-icon" />
+          <button
+            type="button"
+            className="exam-icon"
+            aria-label="全屏"
+            onClick={() => {
+              if (document.fullscreenElement) void document.exitFullscreen();
+              else void rootRef.current?.requestFullscreen();
+            }}
+          >
+            <Maximize2 size={16} />
+          </button>
+          <button type="button" className="exam-icon" aria-label="分享" onClick={() => setShare(true)}>
+            <Share2 size={16} />
+          </button>
+        </div>
+      </header>
+
+      <div className="exam-stage">
+        {mode === "paper" ? (
+          <PdfViewer
+            ref={pdfRef}
+            url={paper.pdfUrl}
+            scale={scale}
+            questions={questions}
+            answers={answers}
+            activeId={activeId}
+            highlightId={highlightId}
+            grade={grade}
+            onPage={setPage}
+            onOpen={(id) => void selectQuestion(id)}
+            onChange={(id, value) => setAnswers((current) => ({ ...current, [id]: value }))}
+            onSelectText={(text, rect) => setLookup({ text, rect })}
+            tool={tool}
+            marks={marks}
+            onInk={(text, inkPage) => markText(text, inkPage, "paper")}
+          />
+        ) : (
+          <ComputerPane
+            file={passages}
+            questions={questions}
+            skill={skill}
+            answers={answers}
+            grade={grade}
+            activeId={activeId}
+            onChange={(id, value) => {
+              setAnswers((current) => ({ ...current, [id]: value }));
+              setVisited((current) => (current.includes(id) ? current : [...current, id]));
+            }}
+            onSelectText={(text, rect) => setLookup({ text, rect })}
+            tool={tool}
+            marks={marks}
+            onInk={(text, inkPage) => markText(text, inkPage, "computer")}
+          />
+        )}
+        <p className="exam-page">{page}</p>
+        {sheetOpen ? (
+          <aside className="exam-drawer">
+            <div className="exam-drawer-bar">
+              <strong>答题卡</strong>
+              <button type="button" className="exam-icon" aria-label="关闭答题卡" onClick={() => setSheetOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+            {sheet}
+          </aside>
+        ) : null}
+        {scriptOpen ? (
+          <aside className="exam-drawer exam-drawer-left">
+            <div className="exam-drawer-bar">
+              <strong>听力原文</strong>
+              <button type="button" className="exam-icon" aria-label="关闭听力原文" onClick={() => setScriptOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+            <div className="exam-script">
+              <p>点一节，播放会跳到那里。逐句原文跟着录音走，不铺在卷面上。</p>
+              {(paper.audioSections ?? []).map((section) => (
+                <button
+                  key={section.section}
+                  type="button"
+                  className={activeSection === section.section ? "is-on" : ""}
+                  onClick={() => audioRef.current?.seek(section.start)}
+                >
+                  <span>{section.title}</span>
+                  <span>{Math.floor(section.start / 60)}:{String(Math.floor(section.start % 60)).padStart(2, "0")}</span>
+                </button>
+              ))}
+            </div>
+          </aside>
         ) : null}
       </div>
 
-      <div className="sticky bottom-0 z-30 border-t border-line bg-surface lg:hidden">
-        <ViewerToolbar
-          title={paper.title}
-          page={page}
-          pages={paper.pages}
-          scale={scale}
-          mode={mode}
-          onBackHref="/ielts"
-          onPage={(next) => pdfRef.current?.goToPage(next)}
-          onScale={(next) => {
-            setScale(next);
-            savePrefs({ ...loadPrefs(), scale: next });
+      <button type="button" className="exam-wordbook" onClick={() => setWordbookOpen(true)}>
+        生词本
+        <span aria-hidden="true">›</span>
+      </button>
+      <button
+        type="button"
+        className="exam-fab"
+        aria-pressed={sheetOpen}
+        aria-label="答题卡"
+        onClick={() => {
+          setScriptOpen(false);
+          setSheetOpen((open) => !open);
+        }}
+      >
+        <FileText size={18} />
+      </button>
+      <footer className="exam-audio">
+        <AudioPlayer
+          ref={audioRef}
+          src={paper.audioUrl}
+          onTime={followTime}
+          onTranscript={() => {
+            setSheetOpen(false);
+            setScriptOpen((open) => !open);
           }}
-          onMode={setMode}
-          onFullscreen={() => {
-            if (document.fullscreenElement) void document.exitFullscreen();
-            else void rootRef.current?.requestFullscreen();
-          }}
-          onShare={() => setShare(true)}
+          onGrade={gradePaper}
         />
-        <div className="flex gap-2 overflow-x-auto px-3 py-2">
-          <button className="btn btn-ghost h-10" onClick={() => setMobilePanel(mobilePanel === "sheet" ? null : "sheet")}>
-            答题卡
-          </button>
-          <button className="btn btn-ghost h-10" onClick={() => setMobilePanel(mobilePanel === "audio" ? null : "audio")}>
-            听力
-          </button>
-          <button className="btn btn-accent h-10" onClick={() => void gradePaper()}>
-            对答案
-          </button>
-          <button className="btn btn-ghost h-10" onClick={() => setWordbookOpen(true)}>
-            生词
-          </button>
-        </div>
-        {!desktop && mobilePanel ? (
-          <div className="max-h-[50vh] overflow-hidden border-t border-line">
-            {mobilePanel === "audio" ? (
-              <AudioPlayer
-                ref={audioRef}
-                src={paper.audioUrl}
-                sections={paper.audioSections ?? []}
-                activeSection={activeSection}
-                onTime={followTime}
-              />
-            ) : (
-              sheet
-            )}
-          </div>
-        ) : null}
-      </div>
+      </footer>
 
       {lookup && sentence ? (
         <SentenceCard
@@ -370,6 +421,7 @@ export function PaperWorkspace({
           text={lookup.text}
           rect={lookup.rect}
           member={Boolean(user?.member)}
+          saved={lookupSaved}
           onAdd={addWord}
           onClose={() => setLookup(null)}
         />

@@ -142,7 +142,7 @@ export const PdfViewer = forwardRef<
   }
 
   return (
-    <div ref={scrollerRef} className={`h-full overflow-auto ${tool === "ink" ? "ink-on" : ""}`} onMouseUp={onMouseUp}>
+    <div ref={scrollerRef} className={`exam-scroll h-full overflow-auto ${tool === "ink" ? "ink-on" : ""}`} onMouseUp={onMouseUp}>
       {error ? (
         <div className="m-6 rounded-xl border border-line bg-surface p-6">
           <p className="font-medium">试卷没有载入</p>
@@ -152,7 +152,7 @@ export const PdfViewer = forwardRef<
           </button>
         </div>
       ) : null}
-      {status && !error ? <p className="px-6 py-4 text-sm text-muted">{status}</p> : null}
+      {status && !pdf && !error ? <p className="px-6 py-4 text-sm text-muted">{status}</p> : null}
       {pdf
         ? Array.from({ length: pdf.numPages }, (_, index) => {
             const pageNumber = index + 1;

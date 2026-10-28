@@ -2,18 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Star, X } from "lucide-react";
 import glossary from "@/data/glossary.json";
 
 export function WordLookupPanel({
   text,
   rect,
   member,
+  saved,
   onAdd,
   onClose,
 }: {
   text: string;
   rect: DOMRect;
   member: boolean;
+  saved: boolean;
   onAdd: (extra?: { ipa?: string; meaning?: string }) => void;
   onClose: () => void;
 }) {
@@ -28,48 +31,43 @@ export function WordLookupPanel({
     setDetail(hit ? { ipa: hit.ipa, zh: hit.zh, found: true } : { found: false });
   }, [member, sentence, word]);
 
-  const left = Math.min(rect.left, window.innerWidth - 300);
-  const top = Math.min(rect.bottom + 8, window.innerHeight - 220);
+  const left = Math.min(Math.max(12, rect.left), window.innerWidth - 336);
+  const top = Math.min(Math.max(60, rect.bottom + 8), window.innerHeight - 210);
 
   return (
-    <div
-      className="fixed z-[60] w-[280px] rounded-xl border border-line bg-surface p-3 shadow-[var(--shadow)]"
-      style={{ left: Math.max(8, left), top: Math.max(8, top) }}
-    >
-      <p className="font-serif text-lg">{sentence ? "选中的句子" : word}</p>
-      {sentence ? (
-        <p className="mt-2 text-sm leading-6 text-muted">
-          {member
-            ? "这句没有预存译文。可以先收进生词本，对照原文自己处理。"
-            : "翻译此句是会员功能。"}
-        </p>
-      ) : member ? (
-        <p className="mt-2 text-sm leading-6">
-          {detail?.ipa ? <span className="mr-2 text-muted">{detail.ipa}</span> : null}
-          {detail?.zh ?? (detail ? "这本词库还没有这个词。" : "正在查词库…")}
-        </p>
-      ) : (
-        <p className="mt-2 text-sm leading-6 text-muted">释义要会员才能看。加入生词本不需要。</p>
-      )}
-      <div className="mt-3 flex flex-wrap gap-2">
+    <aside className="dict-card" style={{ left, top }}>
+      <button type="button" className="dict-close" onClick={onClose} aria-label="关闭">
+        <X size={14} />
+      </button>
+      <div className="dict-head">
+        <p className="dict-word">{sentence ? "选中的句子" : word}</p>
         <button
-          className="btn btn-primary h-10"
-          onClick={() => {
-            onAdd(detail?.zh ? { ipa: detail.ipa, meaning: detail.zh } : undefined);
-            onClose();
-          }}
+          type="button"
+          className="dict-star"
+          aria-pressed={saved}
+          aria-label={saved ? "已在生词本" : "加入生词本"}
+          onClick={() => onAdd(detail?.zh ? { ipa: detail.ipa, meaning: detail.zh } : undefined)}
         >
-          加入生词本
-        </button>
-        {!member ? (
-          <Link className="btn btn-accent h-10" href="/pro">
-            解锁会员
-          </Link>
-        ) : null}
-        <button className="btn btn-text h-10" onClick={onClose}>
-          关闭
+          <Star size={15} fill={saved ? "currentColor" : "none"} />
         </button>
       </div>
-    </div>
+      {sentence ? (
+        <p className="dict-zh">整句翻译用顶栏的 T。这个卡片只查单词。</p>
+      ) : member ? (
+        <>
+          {detail?.ipa ? <p className="dict-ipa">{detail.ipa}</p> : null}
+          <div className="dict-rule" />
+          <p className="dict-zh">{detail?.zh ?? (detail ? "这本词库还没有这个词。" : "正在查词库…")}</p>
+        </>
+      ) : (
+        <>
+          <div className="dict-rule" />
+          <p className="dict-zh">释义在会员里。加入生词本不用会员。</p>
+          <Link className="dict-upgrade" href="/pro">
+            升级付费版
+          </Link>
+        </>
+      )}
+    </aside>
   );
 }

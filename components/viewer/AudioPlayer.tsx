@@ -1,31 +1,36 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Pause, Play, RotateCcw } from "lucide-react";
-import type { AudioSection } from "@/lib/types";
+import { Pause, Play } from "lucide-react";
 
 export type AudioHandle = {
   seek: (seconds: number) => void;
   getTime: () => number;
 };
 
+const rates = [0.75, 1, 1.25, 1.5];
+
 function format(seconds: number) {
-  if (!Number.isFinite(seconds)) return "0:00";
+  if (!Number.isFinite(seconds)) return "00:00";
   const whole = Math.max(0, Math.floor(seconds));
   const mins = Math.floor(whole / 60);
   const rest = whole % 60;
-  return `${mins}:${rest.toString().padStart(2, "0")}`;
+  return `${String(mins).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
+}
+
+function rateLabel(rate: number) {
+  return `${rate.toFixed(rate % 1 === 0 ? 1 : 2)}x`;
 }
 
 export const AudioPlayer = forwardRef<
   AudioHandle,
   {
     src?: string;
-    sections: AudioSection[];
-    activeSection?: number;
     onTime: (seconds: number) => void;
+    onTranscript?: () => void;
+    onGrade?: () => void;
   }
->(function AudioPlayer({ src, sections, activeSection, onTime }, ref) {
+>(function AudioPlayer({ src, onTime, onTranscript, onGrade }, ref) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
@@ -49,101 +54,69 @@ export const AudioPlayer = forwardRef<
     if (audioRef.current) audioRef.current.playbackRate = rate;
   }, [rate]);
 
-  if (!src) return null;
+  function toggle() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) void audio.play().catch(() => setError(true));
+    else audio.pause();
+  }
 
   return (
-    <div className="border-b border-line p-3">
-      <div className="mb-2 flex items-center justify-between text-xs text-muted">
-        <span>听力</span>
-        <span>
-          {format(time)} / {format(duration)}
-        </span>
-      </div>
-      {error ? (
-        <p className="mb-2 text-sm text-wrong">音频没有载入。</p>
+    <div className="exam-transport">
+      {src ? (
+        <audio
+          ref={audioRef}
+          src={src}
+          preload="metadata"
+          onTimeUpdate={(event) => {
+            const next = event.currentTarget.currentTime;
+            setTime(next);
+            onTime(next);
+          }}
+          onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onError={() => setError(true)}
+        />
       ) : null}
-      <audio
-        ref={audioRef}
-        src={src}
-        preload="metadata"
-        onTimeUpdate={(event) => {
-          const next = event.currentTarget.currentTime;
-          setTime(next);
-          onTime(next);
-        }}
-        onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onError={() => setError(true)}
-      />
-      <input
-        className="w-full accent-[var(--primary)]"
-        type="range"
-        min={0}
-        max={duration || 0}
-        step={0.1}
-        value={Math.min(time, duration || 0)}
-        aria-label="听力进度"
-        onChange={(event) => {
-          const next = Number(event.target.value);
-          if (audioRef.current) audioRef.current.currentTime = next;
-          setTime(next);
-        }}
-      />
-      <div className="mt-2 flex flex-wrap gap-1">
-        {sections.map((section) => (
-          <button
-            key={section.section}
-            className={`rounded-full px-2 py-1 text-xs ${activeSection === section.section ? "bg-primary text-white" : "bg-primary-soft text-primary"}`}
-            onClick={() => {
-              if (audioRef.current) {
-                audioRef.current.currentTime = section.start;
-                void audioRef.current.play();
-              }
-            }}
-          >
-            {section.title.split("·")[0]}
-          </button>
-        ))}
-      </div>
-      <div className="mt-2 flex items-center gap-2">
-        <button
-          className="btn btn-primary h-11 w-11 px-0"
-          onClick={() => {
-            const audio = audioRef.current;
-            if (!audio) return;
-            if (audio.paused) void audio.play();
-            else audio.pause();
+      <button type="button" className="exam-play" onClick={toggle} disabled={!src} aria-label={playing ? "暂停" : "播放"}>
+        {playing ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
+      </button>
+      <span className="exam-time">{format(time)}</span>
+      {error ? (
+        <span className="exam-audio-note">音频没有载入</span>
+      ) : (
+        <input
+          className="exam-scrub"
+          type="range"
+          min={0}
+          max={duration || 0}
+          step={0.1}
+          value={Math.min(time, duration || 0)}
+          aria-label="听力进度"
+          disabled={!src}
+          onChange={(event) => {
+            const next = Number(event.target.value);
+            if (audioRef.current) audioRef.current.currentTime = next;
+            setTime(next);
           }}
-          aria-label={playing ? "暂停" : "播放"}
-        >
-          {playing ? <Pause size={16} /> : <Play size={16} />}
-        </button>
-        <button
-          className="btn btn-ghost h-11 px-3"
-          onClick={() => {
-            if (!audioRef.current) return;
-            audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10);
-          }}
-        >
-          <RotateCcw size={14} />
-          10 秒
-        </button>
-        <label className="ml-auto text-xs text-muted">
-          倍速
-          <select
-            className="field ml-2 h-11 w-auto py-0"
-            value={rate}
-            onChange={(event) => setRate(Number(event.target.value))}
-          >
-            {[0.75, 1, 1.25, 1.5].map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+        />
+      )}
+      <span className="exam-time">{format(duration)}</span>
+      <button
+        type="button"
+        className="exam-rate"
+        disabled={!src}
+        onClick={() => setRate((current) => rates[(rates.indexOf(current) + 1) % rates.length])}
+      >
+        {rateLabel(rate)}
+      </button>
+      <button type="button" className="exam-textbtn" onClick={onTranscript} disabled={!src}>
+        听力原文
+      </button>
+      <button type="button" className="exam-textbtn" onClick={onGrade}>
+        查答案
+      </button>
     </div>
   );
 });
