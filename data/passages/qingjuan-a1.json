@@ -1,0 +1,170 @@
+{
+  "groups": [
+    {
+      "skill": "listening",
+      "section": 1,
+      "title": "Section 1 · Questions 1–10",
+      "note": "Complete the form below. Write ONE WORD AND/OR A NUMBER for each answer."
+    },
+    {
+      "skill": "listening",
+      "section": 2,
+      "title": "Section 2 · Questions 11–20",
+      "note": "Answer the questions below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER, or choose the correct letter."
+    },
+    {
+      "skill": "listening",
+      "section": 3,
+      "title": "Section 3 · Questions 21–30",
+      "note": "Choose the correct letter, or write ONE WORD AND/OR A NUMBER."
+    },
+    {
+      "skill": "listening",
+      "section": 4,
+      "title": "Section 4 · Questions 31–40",
+      "note": "Complete the notes. Write ONE WORD AND/OR A NUMBER for each answer. The lecture describes a fictional harbour."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Reading Passage 1 — Why the Greyhaven Marshes Were Given Back to the Tide",
+      "note": "You should spend about 20 minutes on Questions 1–13."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Questions 1–7",
+      "note": "Do the following statements agree with the passage? Write TRUE, FALSE, or NOT GIVEN."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Questions 8–13",
+      "note": "Answer the questions. Write NO MORE THAN THREE WORDS AND/OR A NUMBER from the passage."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Reading Passage 2 — How Greyhaven Cools Its Streets",
+      "note": "You should spend about 20 minutes on Questions 14–26."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 14–19",
+      "note": "The passage has six paragraphs, A–F. Choose the correct heading for each paragraph from the list. There are more headings than paragraphs."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 20–23",
+      "note": "Choose the correct letter, A, B, or C."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 24–26",
+      "note": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER from the passage."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Reading Passage 3 — The Lark Foundry",
+      "note": "You should spend about 20 minutes on Questions 27–40."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 27–33",
+      "note": "Complete the summary. Write NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 34–37",
+      "note": "Choose the correct letter, A, B, or C."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 38–40",
+      "note": "Write TRUE, FALSE, or NOT GIVEN."
+    }
+  ],
+  "passages": [
+    {
+      "section": 1,
+      "title": "Reading Passage 1 — Why the Greyhaven Marshes Were Given Back to the Tide",
+      "paragraphs": [
+        {
+          "label": "",
+          "text": "For most of the twentieth century the marshes east of Greyhaven were treated as land that had not yet been improved. A sea wall, finished in 1926, held the tide out so that sheep could graze. Only later did a small airfield use the drained fields to store fuel. The wall did what it was built to do, but the ground behind it sank. Drained peat shrinks, and by the 1990s winter rain sat on the fields for weeks."
+        },
+        {
+          "label": "",
+          "text": "In 2004 the harbour board stopped repairing a breach that had opened to 400 metres, and let the water return. The decision was practical rather than romantic. Engineers calculated that raising the wall would cost more than the farmland was worth, and the town needed a place for storm water to spread. What followed surprised even the people who had argued for the change. Within three summers, glasswort and sea lavender covered the mud, and redshank nested on the higher tussocks. During the 2013 surge the breach lowered the peak flood level in Greyhaven's lower streets by a measured 18 centimetres."
+        },
+        {
+          "label": "",
+          "text": "Farmers who lost grazing were offered hay from inland meadows for five years, plus a payment tied to the number of breeding waders on their remaining fields. Not every family accepted. Two families took the board to court and lost. The hearing did force the board to publish its flood model, which it still updates every March."
+        },
+        {
+          "label": "",
+          "text": "Visitors are kept to a single boardwalk. Unofficial paths broke the salt crust and left shallow pools where mosquitoes bred, so those paths were closed. Guides say the richest hour is the last hour before dusk, when the wind drops and birds feed on the falling tide. The marshes are not a park. There is no cafe, and the hide has no glass, only a slot at sitting height. Anyone who wants a view of the whole estuary walks up to the old fuel shed, which has been left standing as a marker and nothing more."
+        }
+      ]
+    },
+    {
+      "section": 2,
+      "title": "Reading Passage 2 — How Greyhaven Cools Its Streets",
+      "paragraphs": [
+        {
+          "label": "A",
+          "text": "Greyhaven did not start with a master plan for heat. In 2016 a run of nights above 24 degrees made the upstairs rooms of the market streets unusable, and the council simply counted which blocks stayed hottest after sunset. The count, published as the Warm Block List, has been repeated every July since."
+        },
+        {
+          "label": "B",
+          "text": "The first works were dull and effective. Dark asphalt on Lime Walk was replaced with a pale stone that reflects more sunlight, and bus shelters gained roofs deep enough to shade the queue. These changes were cheap, and they did not require anyone to move."
+        },
+        {
+          "label": "C",
+          "text": "Trees came next, but not as decoration. The council plants only species that can live with salt wind, and it waters them from a tank under the town hall for the first two summers. After that the trees are expected to cope. A survey in 2022 found that a mature tree outside the post office dropped the pavement temperature by 7 degrees at midday."
+        },
+        {
+          "label": "D",
+          "text": "Shops were harder to persuade. A grant pays for canvas awnings, yet the grant is refused if the awning carries advertising. The point, the council says, is shade, not a billboard. About sixty shops had joined by 2024."
+        },
+        {
+          "label": "E",
+          "text": "Water is used sparingly. A misting pipe runs along the fish market for two hours at lunchtime in July and August, and is switched off when the wind rises above 20 kilometres an hour, because the mist then blows into doorways. Fountains were discussed and rejected: they waste water and the drains are already tired."
+        },
+        {
+          "label": "F",
+          "text": "Residents still argue about one proposal: closing the market to cars at noon. Traders say deliveries would suffer. The council has trialled the closure on three Thursdays, and the temperature data from those days has not yet been published. Until it is, the Warm Block List remains a record of streets, not a verdict on traffic."
+        }
+      ]
+    },
+    {
+      "section": 3,
+      "title": "Reading Passage 3 — The Lark Foundry",
+      "paragraphs": [
+        {
+          "label": "",
+          "text": "The Lark Foundry, in a shed beside Greyhaven harbour, still cuts type for small presses. The metal it pours is brass, not the lead mix used by the big city houses. Brass costs more, but it holds a hairline and does not soften in a warm studio. A single alphabet, from the comma to the capital, takes about six weeks if the work is not interrupted."
+        },
+        {
+          "label": "",
+          "text": "The drawing of each letter begins in candle smoke. A designer holds a card above the flame until a black film forms, then scratches the shape out of that film with a needle. The method sounds antique, and it is, but the smoke shows a shaky curve more honestly than a bright screen. Only after the scratch is agreed does anyone open the computer file."
+        },
+        {
+          "label": "",
+          "text": "Apprentices do not design in their first year. They sweep brass dust, learn the names of the tools, and spend Friday mornings at a window that faces the harbour, copying the same lowercase n until the joins are even. The foundry takes two apprentices a year and keeps a chair for a retired cutter who still comes on Thursday to argue about spacing."
+        },
+        {
+          "label": "",
+          "text": "Orders leave by van, not by the river. The river door is kept for the tide, which floods the lower step a few times each winter. Customers who want a faster alphabet are told to go elsewhere. The foundry's view is that a hurried letter is a letter the press will regret, and the waiting list is part of the price."
+        }
+      ]
+    }
+  ]
+}

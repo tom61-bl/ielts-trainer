@@ -1,0 +1,131 @@
+[
+  {
+    "id": "qingjuan-a2",
+    "title": "青卷模拟 02 · 学术类",
+    "module": "academic",
+    "book": 2,
+    "test": 1,
+    "testType": "computer",
+    "pdfUrl": "/samples/qingjuan-a2/c1ce72cfde67753b048c24959026dca9.pdf?v=1",
+    "audioUrl": "/samples/qingjuan-a2/8a272b696854b3979343bb263fb0385e.mp3?v=1",
+    "thumbnailUrl": "/samples/qingjuan-a2/thumb.webp?v=1",
+    "visibility": "public",
+    "source": "original-mock",
+    "version": 1,
+    "skills": [
+      "listening",
+      "reading",
+      "writing"
+    ],
+    "pages": 9,
+    "audioSections": [
+      {
+        "section": 1,
+        "start": 0.0,
+        "title": "Section 1 · Questions 1–10"
+      },
+      {
+        "section": 2,
+        "start": 85.85,
+        "title": "Section 2 · Questions 11–20"
+      },
+      {
+        "section": 3,
+        "start": 159.98,
+        "title": "Section 3 · Questions 21–30"
+      },
+      {
+        "section": 4,
+        "start": 249.67,
+        "title": "Section 4 · Questions 31–40"
+      }
+    ],
+    "blurb": "夜车、缝补课和人行桥。默认为机考分栏，也可以翻回纸笔。"
+  },
+  {
+    "id": "qingjuan-a1",
+    "title": "青卷模拟 01 · 学术类",
+    "module": "academic",
+    "book": 1,
+    "test": 1,
+    "testType": "paper",
+    "pdfUrl": "/samples/qingjuan-a1/2fea19fa5b25878b4476eb43c18df3bf.pdf?v=1",
+    "audioUrl": "/samples/qingjuan-a1/66903764a5713613dc60814d4dcd5cb6.mp3?v=1",
+    "thumbnailUrl": "/samples/qingjuan-a1/thumb.webp?v=1",
+    "visibility": "public",
+    "source": "original-mock",
+    "version": 1,
+    "skills": [
+      "listening",
+      "reading",
+      "writing"
+    ],
+    "pages": 10,
+    "audioSections": [
+      {
+        "section": 1,
+        "start": 0.0,
+        "title": "Section 1 · Questions 1–10"
+      },
+      {
+        "section": 2,
+        "start": 92.16,
+        "title": "Section 2 · Questions 11–20"
+      },
+      {
+        "section": 3,
+        "start": 164.4,
+        "title": "Section 3 · Questions 21–30"
+      },
+      {
+        "section": 4,
+        "start": 248.69,
+        "title": "Section 4 · Questions 31–40"
+      }
+    ],
+    "blurb": "灰港陶器班、盐沼与铸字所。纸笔排版，带听力。"
+  },
+  {
+    "id": "qingjuan-g1",
+    "title": "青卷培训 01 · 培训类",
+    "module": "general",
+    "book": 1,
+    "test": 2,
+    "testType": "paper",
+    "pdfUrl": "/samples/qingjuan-g1/270d7306ca7a5629b3add2ef686ee931.pdf?v=1",
+    "audioUrl": "/samples/qingjuan-g1/8aef5e45fc3a2e4d1dc6e486b9a5a3d3.mp3?v=1",
+    "thumbnailUrl": "/samples/qingjuan-g1/thumb.webp?v=1",
+    "visibility": "public",
+    "source": "original-mock",
+    "version": 1,
+    "skills": [
+      "listening",
+      "reading",
+      "writing"
+    ],
+    "pages": 8,
+    "audioSections": [
+      {
+        "section": 1,
+        "start": 0.0,
+        "title": "Section 1 · Questions 1–10"
+      },
+      {
+        "section": 2,
+        "start": 80.64,
+        "title": "Section 2 · Questions 11–20"
+      },
+      {
+        "section": 3,
+        "start": 152.9,
+        "title": "Section 3 · Questions 21–30"
+      },
+      {
+        "section": 4,
+        "start": 239.76,
+        "title": "Section 4 · Questions 31–40"
+      }
+    ],
+    "blurb": "培训类：告示、排班和一封给房东的信。听力与学术类同卷结构。"
+  }
+]

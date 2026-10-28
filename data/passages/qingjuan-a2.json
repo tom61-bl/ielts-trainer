@@ -1,0 +1,176 @@
+{
+  "groups": [
+    {
+      "skill": "listening",
+      "section": 1,
+      "title": "Section 1 · Questions 1–10",
+      "note": "Complete the booking form. Write ONE WORD AND/OR A NUMBER for each answer."
+    },
+    {
+      "skill": "listening",
+      "section": 2,
+      "title": "Section 2 · Questions 11–20",
+      "note": "Complete the notes or choose the correct letter, A, B, or C."
+    },
+    {
+      "skill": "listening",
+      "section": 3,
+      "title": "Section 3 · Questions 21–30",
+      "note": "Choose the correct letter, or write ONE WORD AND/OR A NUMBER."
+    },
+    {
+      "skill": "listening",
+      "section": 4,
+      "title": "Section 4 · Questions 31–40",
+      "note": "Complete the notes. Write ONE WORD ONLY for each answer. The coast in this lecture is fictional."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Reading Passage 1 — The Night Train Returns to Lark",
+      "note": "You should spend about 20 minutes on Questions 1–13."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Questions 1–6",
+      "note": "Choose the correct heading for paragraphs A–F. There are more headings than paragraphs."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Questions 7–10",
+      "note": "Write TRUE, FALSE, or NOT GIVEN."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Questions 11–13",
+      "note": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Reading Passage 2 — Mending as a Design Skill",
+      "note": "You should spend about 20 minutes on Questions 14–26."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 14–20",
+      "note": "Write TRUE, FALSE, or NOT GIVEN."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 21–23",
+      "note": "Choose the correct letter, A, B, or C."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 24–26",
+      "note": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Reading Passage 3 — Why the Lark Footbridge Sways",
+      "note": "You should spend about 20 minutes on Questions 27–40."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 27–33",
+      "note": "Complete the summary with NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 34–37",
+      "note": "Choose the correct letter, A, B, or C."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 38–40",
+      "note": "Write TRUE, FALSE, or NOT GIVEN."
+    }
+  ],
+  "passages": [
+    {
+      "section": 1,
+      "title": "Reading Passage 1 — The Night Train Returns to Lark",
+      "paragraphs": [
+        {
+          "label": "A",
+          "text": "The night train between Lark and the coast ran for forty years and then stopped in 1997, when the operator decided the carriages cost more to heat than the tickets brought in. For a long time the night arrival was only a story told by people who had used it to reach an early boat."
+        },
+        {
+          "label": "B",
+          "text": "In 2023 a small company called Low Lamp put one train back, and only on Friday and Saturday. The trial was deliberately narrow. If the carriages were empty, the company could end the experiment without having promised a daily service."
+        },
+        {
+          "label": "C",
+          "text": "The fare is 31 pounds and it includes a bunk, a blanket, and tea at dawn. It does not include breakfast. Passengers who want a meal buy it at the harbour kiosk after they get off, which the company prefers, because a kitchen car would need staff the trial cannot pay."
+        },
+        {
+          "label": "D",
+          "text": "Lark station had to change before the first departure. The old waiting room had no step-free route to the platform, so Low Lamp paid for a short ramp and a light over the door. Nothing else in the building was restored. The clock still stops at ten past four."
+        },
+        {
+          "label": "E",
+          "text": "Staff do not sleep on the train. A conductor stays awake, and a second worker meets the train at the coast. The company rejected bunks for staff because the spare compartment is used for luggage that will not fit in the racks, including bicycles."
+        },
+        {
+          "label": "F",
+          "text": "The timetable is the main complaint. The train leaves Lark at 23:40, which misses the last bus from the villages, and it arrives at 5:10, earlier than some guests would like. Low Lamp has said it will not move the departure until the trial has run a full summer. The figures for May have not been released."
+        }
+      ]
+    },
+    {
+      "section": 2,
+      "title": "Reading Passage 2 — Mending as a Design Skill",
+      "paragraphs": [
+        {
+          "label": "",
+          "text": "At the Northline studio, mending is taught before cutting. New students want to make a coat. The tutor, Imani Shah, makes them repair one first. Her reason is practical: a person who cannot see how a seam failed will build the same failure into a new garment. The repair room smells of wool and machine oil, and the radio is kept low because Shah wants the stitch counted out loud."
+        },
+        {
+          "label": "",
+          "text": "Each student is given a damaged jacket from the town's swap rail and a card listing what may be replaced. Buttons may be changed. Linings may not, unless the lining has torn, because a new lining makes the jacket look rebuilt rather than mended. The visible patch, Shah says, is the point. It tells the next wearer what happened."
+        },
+        {
+          "label": "",
+          "text": "The course lasts nine weeks. In week four the students photograph every repair for a wall in the lobby. The photographs are not graded for beauty. They are graded for whether a stranger could copy the repair from the picture. Shah calls this the bus test: if someone waiting for a bus cannot follow it, the photo has failed."
+        },
+        {
+          "label": "",
+          "text": "Local tailors were doubtful at first. They thought the studio would do cheap repairs and take their customers. Shah now sends any jacket that needs a machine the studio does not own, and the tailors send students the torn cuffs they have no time for. The arrangement is written on a single page pinned by the door, and it is reviewed every January."
+        }
+      ]
+    },
+    {
+      "section": 3,
+      "title": "Reading Passage 3 — Why the Lark Footbridge Sways",
+      "paragraphs": [
+        {
+          "label": "",
+          "text": "The Lark Footbridge opened in 2011 to join the station to the Saturday market. It is a thin steel span, chosen because a heavier bridge would have needed a pier in the channel where the ferry turns. On the first market day the deck began to sway, not in a storm but at noon, when the bridge was simply full."
+        },
+        {
+          "label": "",
+          "text": "Engineers from the harbour board filmed the crowd and noticed that people had started to walk in step. A small sideways movement made walkers put their feet down together, and those footsteps added to the movement. The bridge was not weak. It was matched, by accident, to the pace of a crowd. The board closed it for eleven days."
+        },
+        {
+          "label": "",
+          "text": "The repair did not add a pier. Workers fitted dampers under the deck, small weights that slide as the bridge moves and so take energy out of the sway. The parts came from a factory in Hull and were bolted in at night so the ferry could still turn by day. The job cost 180 thousand pounds."
+        },
+        {
+          "label": "",
+          "text": "After the dampers, the noon sway did not return. The board still posts a guard on the first Saturday of August, when the market is largest, and the guard can stop people if they bunch at the middle. There is no plan to replace the span. The thin deck still lets the ferry turn, which was the reason for the design, and the dampers are checked every spring."
+        }
+      ]
+    }
+  ]
+}

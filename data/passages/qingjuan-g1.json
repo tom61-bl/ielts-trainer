@@ -1,0 +1,148 @@
+{
+  "groups": [
+    {
+      "skill": "listening",
+      "section": 1,
+      "title": "Section 1 · Questions 1–10",
+      "note": "Complete the form. Write ONE WORD AND/OR A NUMBER for each answer."
+    },
+    {
+      "skill": "listening",
+      "section": 2,
+      "title": "Section 2 · Questions 11–20",
+      "note": "Complete the notes or choose the correct letter, A, B, or C."
+    },
+    {
+      "skill": "listening",
+      "section": 3,
+      "title": "Section 3 · Questions 21–30",
+      "note": "Choose the correct letter, or write ONE WORD AND/OR A NUMBER."
+    },
+    {
+      "skill": "listening",
+      "section": 4,
+      "title": "Section 4 · Questions 31–40",
+      "note": "Complete the notes. Write ONE WORD AND/OR A NUMBER. The market in this talk is fictional."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Section 1 — Everyday notices",
+      "note": "Questions 1–14. Read the three notices."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Questions 1–6",
+      "note": "Which notice contains the following information? Write A, B, or C."
+    },
+    {
+      "skill": "reading",
+      "section": 1,
+      "title": "Questions 7–14",
+      "note": "Answer the questions. Write NO MORE THAN THREE WORDS AND/OR A NUMBER from the notices."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Section 2 — Hybrid shifts at Mill and Co",
+      "note": "Questions 15–27. The text is a workplace notice."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 15–21",
+      "note": "Do the statements agree with the notice? Write YES, NO, or NOT GIVEN."
+    },
+    {
+      "skill": "reading",
+      "section": 2,
+      "title": "Questions 22–27",
+      "note": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER from the notice."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Section 3 — Mending the field walls",
+      "note": "Questions 28–40."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 28–34",
+      "note": "Write TRUE, FALSE, or NOT GIVEN."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 35–38",
+      "note": "Choose the correct letter, A, B, or C."
+    },
+    {
+      "skill": "reading",
+      "section": 3,
+      "title": "Questions 39–40",
+      "note": "Write ONE WORD from the passage."
+    }
+  ],
+  "passages": [
+    {
+      "section": 1,
+      "title": "Section 1 — Everyday notices",
+      "paragraphs": [
+        {
+          "label": "A",
+          "text": "Workshop rooms at the Mill. Room 2 has a kiln and must be booked two days ahead. The fee is 12 pounds an hour. Clay is not included. Evening slots end at 9 pm, and the key is collected from the front desk. Children under 14 are not allowed in Room 2."
+        },
+        {
+          "label": "B",
+          "text": "Recycling yard on Rope Walk. The yard opens on Saturday from 8 am to 1 pm. It takes glass, paper, and garden waste. It does not take paint. Bring proof of address. Staff will not lift heavy items, so bring a second person if you have large branches."
+        },
+        {
+          "label": "C",
+          "text": "Lost property at the Mill. Items are kept for 28 days and then given to the community shop. Describe the item at the front desk. Bags found on the bus are labelled with the route number. Cash is never returned without a receipt from the day it was lost."
+        }
+      ]
+    },
+    {
+      "section": 2,
+      "title": "Section 2 — Hybrid shifts at Mill and Co",
+      "paragraphs": [
+        {
+          "label": "",
+          "text": "From 1 May, floor staff may work one home day each week. The home day cannot be Monday, because that is when deliveries are checked, and it cannot be the day before your own holiday. You must name the day on the shared sheet by noon on Wednesday of the previous week."
+        },
+        {
+          "label": "",
+          "text": "Home days are for quiet tasks: orders, the returns log, and emails. They are not for the saw, and they are not a day off. If the network fails, come in. Do not wait to be called. The supervisor will mark the day as worked only if the returns log is updated before 4 pm."
+        },
+        {
+          "label": "",
+          "text": "New staff cannot use the scheme in their first 60 days. Anyone already on a warning for lateness is also excluded until the warning ends. The trial runs until October, and the committee will read the logs before deciding whether to keep it. Questions go to Ruth on the goods desk, not to the director."
+        }
+      ]
+    },
+    {
+      "section": 3,
+      "title": "Section 3 — Mending the field walls",
+      "paragraphs": [
+        {
+          "label": "",
+          "text": "The stone walls around Millmarket were not built as scenery. Farmers stacked them to keep sheep on the thin grass and to put somewhere the stones that the plough turned up. A well-made wall has two faces and a heart of small fillings. Without the heart, the faces look solid and fall in the first hard frost."
+        },
+        {
+          "label": "",
+          "text": "Most of the walls still standing were last rebuilt in the 1950s, when a grant paid for the stone but not for the labour. Families did the lifting themselves. That is why some stretches run straight for a few metres and then wobble: the work stopped at dusk and started again with a different pair of hands."
+        },
+        {
+          "label": "",
+          "text": "The current repair gang meets on the second Sunday of each month, unless the ground is frozen. New volunteers are shown the heart of the wall before they are allowed to touch the face. The gang lead, Cora Bell, will not take anyone who cannot stay for the whole morning, because a half-finished lift is dangerous to the next person. Tools are stored in the old milk shed. Bring gloves. Boots are lent."
+        },
+        {
+          "label": "",
+          "text": "There is an argument about wire. Some owners want a fence on top of the wall so that lambs cannot scramble. Bell refuses. Wire cuts the look of the wall and, in her view, teaches the flock to push. She would rather add a third course of stone. The parish has money for that course this year, and the decision will be reviewed after the lambing count in June."
+        }
+      ]
+    }
+  ]
+}

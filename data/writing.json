@@ -1,0 +1,98 @@
+[
+  {
+    "id": "qingjuan-a1-t1",
+    "paperId": "qingjuan-a1",
+    "task": 1,
+    "module": "academic",
+    "title": "Visits to three city libraries",
+    "minWords": 150,
+    "prompt": "The chart below shows visits to three libraries in one city in 2019, 2021, and 2024. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "chart": {
+      "caption": "Visits, in thousands.",
+      "categories": [
+        "2019",
+        "2021",
+        "2024"
+      ],
+      "unit": "thousand visits",
+      "series": [
+        {
+          "name": "North",
+          "values": [
+            40,
+            55,
+            62
+          ]
+        },
+        {
+          "name": "Market",
+          "values": [
+            70,
+            48,
+            36
+          ]
+        },
+        {
+          "name": "Harbour",
+          "values": [
+            22,
+            30,
+            58
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "qingjuan-a1-t2",
+    "paperId": "qingjuan-a1",
+    "task": 2,
+    "module": "academic",
+    "title": "Cars in the city centre",
+    "minWords": 250,
+    "prompt": "Some people believe that private cars should be banned from city centres. Others think drivers need access to those streets. Discuss both views and give your own opinion."
+  },
+  {
+    "id": "qingjuan-a2-t1",
+    "paperId": "qingjuan-a2",
+    "task": 1,
+    "module": "academic",
+    "title": "A community compost scheme",
+    "minWords": 150,
+    "prompt": "The diagram below shows how a community compost scheme turns food scraps into soil for street trees. Summarise the information by selecting and reporting the main features.",
+    "steps": [
+      "Residents leave scraps in the gate bin.",
+      "Volunteers remove plastic and meat.",
+      "Scraps are mixed with dry leaves.",
+      "The mix rests in a bay for eight weeks and is turned twice.",
+      "Finished soil is spread under the street trees."
+    ]
+  },
+  {
+    "id": "qingjuan-a2-t2",
+    "paperId": "qingjuan-a2",
+    "task": 2,
+    "module": "academic",
+    "title": "Vocational courses and research",
+    "minWords": 250,
+    "prompt": "Some people think universities should spend more on vocational courses than on research. To what extent do you agree or disagree?"
+  },
+  {
+    "id": "qingjuan-g1-t1",
+    "paperId": "qingjuan-g1",
+    "task": 1,
+    "module": "general",
+    "title": "A letter about the heater",
+    "minWords": 150,
+    "prompt": "You rent a flat, and the heater in the living room has not worked for six days. Write a letter to your landlord. In your letter: describe the problem, explain how it affects you, and say what you would like the landlord to do."
+  },
+  {
+    "id": "qingjuan-g1-t2",
+    "paperId": "qingjuan-g1",
+    "task": 2,
+    "module": "general",
+    "title": "A practical skill or a language",
+    "minWords": 250,
+    "prompt": "Some people think it is more useful to learn a practical skill than a foreign language. Do you agree or disagree?"
+  }
+]

@@ -1,0 +1,138 @@
+[
+  {
+    "id": "p1-home",
+    "part": 1,
+    "topic": "住处",
+    "prompt": "Home",
+    "questions": [
+      "Do you live in a house or a flat?",
+      "What do you like about the place you live in?",
+      "Is it noisy where you live?",
+      "Which room do you spend the most time in?"
+    ]
+  },
+  {
+    "id": "p1-walking",
+    "part": 1,
+    "topic": "走路",
+    "prompt": "Walking",
+    "questions": [
+      "How often do you walk somewhere instead of taking transport?",
+      "Where do you like to walk?",
+      "Do you prefer to walk alone or with someone?",
+      "Do you ever walk at night?"
+    ]
+  },
+  {
+    "id": "p1-meals",
+    "part": 1,
+    "topic": "吃饭",
+    "prompt": "Meals",
+    "questions": [
+      "What do you usually eat in the morning?",
+      "Do you like cooking?",
+      "How often do you eat in a restaurant?",
+      "Describe a meal you remember clearly."
+    ]
+  },
+  {
+    "id": "p2-building",
+    "part": 2,
+    "topic": "一座公共建筑",
+    "prompt": "Describe a public building you enjoy visiting.",
+    "points": [
+      "what the building is",
+      "where it is",
+      "what you do there",
+      "and explain why you enjoy visiting it"
+    ],
+    "followId": "p3-building"
+  },
+  {
+    "id": "p3-building",
+    "part": 3,
+    "topic": "公共建筑",
+    "prompt": "Public buildings",
+    "followId": "p2-building",
+    "questions": [
+      "Why do cities spend money on public buildings?",
+      "Should old buildings be kept, or replaced?",
+      "How can a library or a hall serve people who do not live nearby?"
+    ]
+  },
+  {
+    "id": "p2-skill",
+    "part": 2,
+    "topic": "向年长的人学的技能",
+    "prompt": "Describe a skill you learned from an older person.",
+    "points": [
+      "what the skill is",
+      "who taught you",
+      "how you learned it",
+      "and explain what you still use from that lesson"
+    ],
+    "followId": "p3-skill"
+  },
+  {
+    "id": "p3-skill",
+    "part": 3,
+    "topic": "技能与年纪",
+    "prompt": "Skills and age",
+    "followId": "p2-skill",
+    "questions": [
+      "What can older people teach that a course cannot?",
+      "Are practical skills valued less than academic ones?",
+      "Should schools invite local workers in to teach?"
+    ]
+  },
+  {
+    "id": "p2-wait",
+    "part": 2,
+    "topic": "一次等待",
+    "prompt": "Describe a time you had to wait for something.",
+    "points": [
+      "what you waited for",
+      "how long you waited",
+      "what you did while waiting",
+      "and explain how you felt"
+    ],
+    "followId": "p3-wait"
+  },
+  {
+    "id": "p3-wait",
+    "part": 3,
+    "topic": "等待",
+    "prompt": "Waiting",
+    "followId": "p2-wait",
+    "questions": [
+      "Why are people less willing to wait than they used to be?",
+      "Is waiting ever useful?",
+      "How should public services treat people who have been waiting a long time?"
+    ]
+  },
+  {
+    "id": "p2-quiet",
+    "part": 2,
+    "topic": "城里安静的地方",
+    "prompt": "Describe a quiet place in your city.",
+    "points": [
+      "where it is",
+      "how often you go there",
+      "what you do there",
+      "and explain why it feels quiet"
+    ],
+    "followId": "p3-quiet"
+  },
+  {
+    "id": "p3-quiet",
+    "part": 3,
+    "topic": "安静",
+    "prompt": "Quiet in cities",
+    "followId": "p2-quiet",
+    "questions": [
+      "Why is quiet hard to find in a city?",
+      "Should noisy streets be limited at night?",
+      "Do people need quiet in order to study?"
+    ]
+  }
+]
