@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, FileText, Maximize2, Monitor, Share2, X } from "lucide-react";
 import type { GradeResult, Paper, PassageFile, Question, Skill, ViewMode } from "@/lib/types";
 import { gradeAll } from "@/lib/grade";
-import { getAnswerKeys } from "@/lib/keys";
+import { getAnswerKeys, type AnswerKey } from "@/lib/keys";
 import { loadPrefs, loadProgress, loadWordbook, readJson, savePrefs, saveProgress, saveWordbook, storageKeys, writeJson } from "@/lib/storage";
 import { useToast } from "../ui/Toast";
 import { ShareModal } from "../ui/ShareModal";
@@ -24,10 +24,12 @@ export function PaperWorkspace({
   paper,
   questions,
   passages,
+  answerKeys,
 }: {
   paper: Paper;
   questions: Question[];
   passages: PassageFile;
+  answerKeys?: AnswerKey[] | null;
 }) {
   const toast = useToast();
   const pdfRef = useRef<PdfHandle>(null);
@@ -42,7 +44,7 @@ export function PaperWorkspace({
   const [grade, setGrade] = useState<Record<string, GradeResult> | null>(null);
   const [page, setPage] = useState(1);
   const [scale, setScale] = useState(1);
-  const [mode, setMode] = useState<ViewMode>(paper.testType);
+  const [mode, setMode] = useState<ViewMode>(paper.pdfUrl ? paper.testType : "computer");
   const [followId, setFollowId] = useState<string | null>(null);
   const [share, setShare] = useState(false);
   const [wordbookOpen, setWordbookOpen] = useState(false);
@@ -115,9 +117,9 @@ export function PaperWorkspace({
   }
 
   function gradePaper() {
-    const keys = getAnswerKeys(paper.id);
-    if (!keys) {
-      toast("这套卷还没有答案");
+    const keys = answerKeys ?? getAnswerKeys(paper.id);
+    if (!keys?.length) {
+      toast("这份卷还没有答案。在 Markdown 末尾加上 Answers 列表后再导入。");
       return;
     }
     setGrade(gradeAll(keys, answers));
@@ -265,15 +267,17 @@ export function PaperWorkspace({
         </div>
         <h1 className="exam-title">{paper.title}</h1>
         <div className="exam-top-right">
-          <button
-            type="button"
-            className="exam-icon"
-            aria-pressed={mode === "computer"}
-            aria-label={mode === "paper" ? "切换到机考" : "切换到纸笔"}
-            onClick={() => setMode(mode === "paper" ? "computer" : "paper")}
-          >
-            {mode === "paper" ? <Monitor size={16} /> : <FileText size={16} />}
-          </button>
+          {paper.pdfUrl ? (
+            <button
+              type="button"
+              className="exam-icon"
+              aria-pressed={mode === "computer"}
+              aria-label={mode === "paper" ? "切换到机考" : "切换到纸笔"}
+              onClick={() => setMode(mode === "paper" ? "computer" : "paper")}
+            >
+              {mode === "paper" ? <Monitor size={16} /> : <FileText size={16} />}
+            </button>
+          ) : null}
           <ThemeToggle iconOnly className="exam-icon" />
           <button
             type="button"

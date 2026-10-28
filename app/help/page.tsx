@@ -34,6 +34,7 @@ export default function HelpPage() {
         <li>2. 需要时再按学术类 / 培训类、纸笔 / 机考、科目筛选。</li>
         <li>3. 打开试卷后，用答题卡定位。纸笔模式翻 PDF，机考模式左右分栏。</li>
         <li>4. 选中单词可以收入生词本，再导出 CSV 或 Anki。</li>
+        <li>5. 登录后可以导入 Markdown 阅读：Passage、A. B. C. 段落、Questions，文末加 Answers 就能对答案。</li>
       </ol>
       <div className="mt-8 space-y-3">
         {faqs.map((item) => (

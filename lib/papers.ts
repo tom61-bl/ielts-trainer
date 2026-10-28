@@ -7,7 +7,9 @@ import qG1 from "@/data/questions/qingjuan-g1.json";
 import pA1 from "@/data/passages/qingjuan-a1.json";
 import pA2 from "@/data/passages/qingjuan-a2.json";
 import pG1 from "@/data/passages/qingjuan-g1.json";
+import { remoteWorkMarkdown } from "@/data/remote-work";
 import { publicPath } from "./content";
+import { parseMarkdownPaper } from "./parseMarkdownPaper";
 import type {
   Paper,
   PassageFile,
@@ -29,8 +31,17 @@ const passageMap: Record<string, PassageFile> = {
   "qingjuan-g1": pG1 as PassageFile,
 };
 
+const remoteWork = parseMarkdownPaper(remoteWorkMarkdown, {
+  id: "remote-work",
+  title: "远程办公 · 学术类",
+  book: 3,
+  test: 1,
+});
+questionMap["remote-work"] = remoteWork.questions;
+passageMap["remote-work"] = remoteWork.passages;
+
 export function getPapers(): Paper[] {
-  return (papers as Paper[])
+  return [...(papers as Paper[]), remoteWork.paper]
     .slice()
     .sort((a, b) => b.book - a.book || a.module.localeCompare(b.module) || b.test - a.test)
     .map((paper) => ({

@@ -112,7 +112,7 @@ export function ComputerPane({
             return (
               <section key={`${group.section}-${group.title}`} className="mb-6">
                 <h3 className="font-medium">{group.title}</h3>
-                {group.note ? <p className="mt-1 text-sm text-muted">{group.note}</p> : null}
+                {group.note ? <p className="mt-1 whitespace-pre-line text-sm text-muted">{group.note}</p> : null}
                 <div className="mt-3 space-y-4">
                   {groupQuestions.map((question) => (
                     <div

@@ -4,12 +4,14 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AudioLines, Bell, BookMarked, Columns2, Highlighter, Languages, MousePointer2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { listImportedPapers, saveImportedMarkdown } from "@/lib/importedPapers";
 import { listPrivatePapers, savePrivatePaper } from "@/lib/private";
 import { loadWordbook, saveWordbook } from "@/lib/storage";
 import type { Module, Paper, ViewMode, WordEntry } from "@/lib/types";
 import { WordbookDrawer } from "../wordbook/WordbookDrawer";
 import { Modal } from "../ui/Modal";
 import { useToast } from "../ui/Toast";
+import { MarkdownImport } from "./MarkdownImport";
 import { PaperCard } from "./PaperCard";
 
 const skills = [
@@ -73,35 +75,41 @@ export function CatalogBoard({
   const [moduleFilter, setModuleFilter] = useState<"all" | Module>("all");
   const [typeFilter, setTypeFilter] = useState<"all" | ViewMode>("all");
   const [privatePapers, setPrivatePapers] = useState<Paper[]>([]);
+  const [extraTotals, setExtraTotals] = useState<Record<string, number>>({});
   const [loadedOwner, setLoadedOwner] = useState<string | null>(null);
+  const [markdownOpen, setMarkdownOpen] = useState(false);
   const [feature, setFeature] = useState<(typeof features)[number] | null>(null);
   const [wordsOpen, setWordsOpen] = useState(false);
   const [words, setWords] = useState<WordEntry[] | null>(null);
 
   if (user && loadedOwner !== user.id) {
     setLoadedOwner(user.id);
-    setPrivatePapers(
-      listPrivatePapers(user.id).map((item) => ({
+    const imported = listImportedPapers(user.id);
+    setExtraTotals(Object.fromEntries(imported.map((item) => [item.paper.id, item.questions.length])));
+    setPrivatePapers([
+      ...imported.map((item) => item.paper),
+      ...listPrivatePapers(user.id).map((item) => ({
         id: item.id,
         title: item.title,
-        module: "academic",
+        module: "academic" as const,
         book: 0,
         test: 0,
-        testType: "paper",
+        testType: "paper" as const,
         pdfUrl: "",
         thumbnailUrl: "",
-        visibility: "private",
+        visibility: "private" as const,
         source: "private",
         version: 1,
-        skills: ["reading"],
+        skills: ["reading"] as Paper["skills"],
         pages: 1,
         blurb: "只在这台浏览器、这个账号下可见。",
       })),
-    );
+    ]);
   }
   if (!user && loadedOwner) {
     setLoadedOwner(null);
     setPrivatePapers([]);
+    setExtraTotals({});
   }
 
   const visible = useMemo(() => {
@@ -234,18 +242,23 @@ export function CatalogBoard({
           </button>
         ))}
         {user ? (
-          <label>
-            导入私有卷
-            <input
-              type="file"
-              accept="application/pdf"
-              className="sr-only"
-              onChange={(event) => void onFile(event.target.files?.[0])}
-            />
-          </label>
+          <>
+            <label>
+              导入 PDF
+              <input
+                type="file"
+                accept="application/pdf"
+                className="sr-only"
+                onChange={(event) => void onFile(event.target.files?.[0])}
+              />
+            </label>
+            <button type="button" onClick={() => setMarkdownOpen(true)}>
+              导入 Markdown
+            </button>
+          </>
         ) : (
           <button type="button" onClick={() => setLoginOpen(true)}>
-            登录后导入私有卷
+            登录后导入
           </button>
         )}
       </div>
@@ -260,14 +273,14 @@ export function CatalogBoard({
               <p className="period-note">最新一组。封面点进去就是整套卷，听力题号会跳到对应的一句。</p>
             ) : null}
             {group.key === "private" ? (
-              <p className="period-note">只在这台浏览器、这个账号下可见，不会上传。</p>
+              <p className="period-note">PDF 和 Markdown 都只在这台浏览器、这个账号下可见，不会上传。</p>
             ) : null}
             <div className="year-rail">
               {group.items.map((paper) => (
                 <PaperCard
                   key={paper.id}
                   paper={paper}
-                  total={totals[paper.id] ?? 0}
+                  total={totals[paper.id] ?? extraTotals[paper.id] ?? 0}
                   fresh={paper.book === maxBook && paper.visibility !== "private"}
                 />
               ))}
@@ -305,6 +318,22 @@ export function CatalogBoard({
           </div>
         ) : null}
       </Modal>
+      <MarkdownImport
+        open={markdownOpen}
+        onClose={() => setMarkdownOpen(false)}
+        onImport={(source) => {
+          if (!user) return "请先登录";
+          try {
+            const saved = saveImportedMarkdown(user.id, source);
+            setPrivatePapers((current) => [saved.paper, ...current.filter((item) => item.id !== saved.paper.id)]);
+            setExtraTotals((current) => ({ ...current, [saved.paper.id]: saved.questions.length }));
+            toast(`已导入「${saved.paper.blurb || saved.paper.title}」`);
+            return null;
+          } catch (error) {
+            return error instanceof Error ? error.message : "这份 Markdown 没有读懂";
+          }
+        }}
+      />
       <WordbookDrawer
         open={wordsOpen}
         entries={words ?? []}

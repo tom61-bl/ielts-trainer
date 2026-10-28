@@ -8,6 +8,7 @@ export const storageKeys = {
   users: "ielts:users",
   session: "ielts:session",
   privatePapers: "ielts:private-papers",
+  markdownPapers: "ielts:markdown-papers",
   writing: (taskId: string) => `ielts:writing:${taskId}`,
   speaking: (promptId: string) => `ielts:speaking:${promptId}`,
   ink: (paperId: string) => `ielts:ink:${paperId}`,
