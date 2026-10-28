@@ -120,6 +120,29 @@ a {
   transform: none;
 }
 
+/* .btn sets display, so responsive show/hide utilities must win when combined with it. */
+.btn.hidden {
+  display: none;
+}
+
+@media (width >= 40rem) {
+  .btn.sm\:inline-flex {
+    display: inline-flex;
+  }
+}
+
+@media (width >= 48rem) {
+  .btn.md\:hidden {
+    display: none;
+  }
+}
+
+@media (width >= 64rem) {
+  .btn.lg\:hidden {
+    display: none;
+  }
+}
+
 .btn-primary {
   background: var(--primary);
   color: white;

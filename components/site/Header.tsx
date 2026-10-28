@@ -24,11 +24,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-3 px-4">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary font-serif text-lg text-white">
             卷
           </span>
-          <span className="text-[15px] font-medium tracking-tight">雅思真题在线</span>
+          <span className="whitespace-nowrap text-[15px] font-medium tracking-tight">雅思真题在线</span>
         </Link>
         <nav className="ml-4 hidden items-center gap-5 text-sm text-muted md:flex">
           {links.map((link) => (
@@ -69,6 +69,16 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <button
+            className="btn btn-text justify-start"
+            onClick={() => {
+              setMenu(false);
+              setUrl(window.location.href);
+              setShare(true);
+            }}
+          >
+            分享
+          </button>
           {user ? (
             <button
               className="btn btn-ghost mt-3"
