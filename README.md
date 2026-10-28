@@ -44,6 +44,8 @@ npm run samples
 
 ## 部署到 GitHub Pages
 
+线上地址：[https://tom61-bl.github.io/ielts-trainer/](https://tom61-bl.github.io/ielts-trainer/)。仓库是 [tom61-bl/ielts-trainer](https://github.com/tom61-bl/ielts-trainer)。
+
 站点是静态导出。推到仓库的 `main` 后，`.github/workflows/pages.yml` 会构建 `out/` 并发布到 GitHub Pages。项目站的地址是 `https://<用户名>.github.io/<仓库名>/`，构建时会把 `NEXT_PUBLIC_BASE_PATH` 设成 `/<仓库名>`。如果仓库名以 `.github.io` 结尾，前缀留空。
 
 仓库 Settings → Pages 的 Source 选 GitHub Actions。仓库需要是公开的，免费账号才能用 Pages。
